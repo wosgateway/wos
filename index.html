@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOS — Healthcare Hospitality Operating System</title>
+    <meta name="description" content="WOS เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว ระบบประสานงานผู้ป่วยข้ามพรมแดนไทย-ลาว สำหรับคลินิก โรงแรม และพันธมิตร">
+    <link rel="canonical" href="https://wos.asia/">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="alternate icon" href="images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WOS — Healthcare Hospitality Operating System">
+    <meta property="og:title" content="WOS — Healthcare Hospitality Operating System">
+    <meta property="og:description" content="โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว">
+    <meta property="og:url" content="https://wos.asia/">
+    <meta property="og:image" content="https://wos.asia/images/og-cover.jpg">
+    <meta property="og:locale" content="th_TH">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WOS — Healthcare Hospitality Operating System">
+    <meta name="twitter:description" content="โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว">
+    <meta name="twitter:image" content="https://wos.asia/images/og-cover.jpg">
+
+    <!-- Perf: preconnect before loading Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Compiled, minified Tailwind CSS (built from source, not the @tailwindcss/browser JIT-in-browser CDN) -->
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <style>
+        body { font-family: 'Prompt', 'Noto Sans Lao', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .flow-line {
+            background: repeating-linear-gradient(90deg, #10b981 0, #10b981 6px, transparent 6px, transparent 12px);
+            height: 2px;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .fade-up { animation: fadeUp .6s ease-out both; }
+            @keyframes fadeUp { from { opacity:0; transform: translateY(12px);} to {opacity:1; transform:none;} }
+        }
+        .lang-btn { transition: all .15s ease; }
+        .lang-btn.active { background:#059669; color:#fff; }
+    </style>
+
+    <!-- Structured data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "WOS — Healthcare Hospitality Operating System",
+      "alternateName": "WOS",
+      "url": "https://wos.asia/",
+      "logo": "https://wos.asia/images/favicon.svg",
+      "description": "โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว",
+      "areaServed": ["TH", "LA"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+66-85-590-7666",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+            <div class="text-2xl font-bold text-emerald-600 tracking-tight shrink-0">WOS<span class="text-amber-500 mono text-base align-top">.os</span></div>
+            <nav class="hidden lg:flex space-x-8 text-sm font-medium text-slate-600" aria-label="Main navigation">
+                <a href="#why" class="hover:text-emerald-600 transition" data-i18n="nav_why"></a>
+                <a href="#system" class="hover:text-emerald-600 transition" data-i18n="nav_system"></a>
+                <a href="#services" class="hover:text-emerald-600 transition" data-i18n="nav_services"></a>
+                <a href="#ecosystem" class="hover:text-emerald-600 transition" data-i18n="nav_ecosystem"></a>
+                <a href="#partner" class="hover:text-emerald-600 transition" data-i18n="nav_partner"></a>
+            </nav>
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center bg-slate-100 rounded-full p-1 mono text-xs font-semibold" role="group" aria-label="Language switcher">
+                    <button class="lang-btn px-2.5 py-1.5 rounded-full" data-lang="th" aria-label="ภาษาไทย">TH</button>
+                    <button class="lang-btn px-2.5 py-1.5 rounded-full" data-lang="lo" aria-label="ພາສາລາວ">LAO</button>
+                    <button class="lang-btn px-2.5 py-1.5 rounded-full" data-lang="en" aria-label="English">EN</button>
+                </div>
+                <a href="#partner" class="hidden sm:flex bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-sm transition items-center justify-center" data-i18n="cta_partner_header"></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50/30 py-20 lg:py-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-2xl space-y-6 fade-up">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider mono">
+                    Healthcare Hospitality Operating System
+                </span>
+                <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 leading-tight" data-i18n="hero_headline"></h1>
+                <p class="text-base text-slate-600 leading-relaxed" data-i18n="hero_body"></p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                    <a href="#partner" class="bg-emerald-600 hover:bg-emerald-700 text-white text-center px-8 h-14 flex items-center justify-center rounded-xl font-medium shadow-md transition" data-i18n="cta_partner"></a>
+                    <a href="#investor" class="border border-slate-300 hover:border-emerald-600 bg-white text-slate-700 hover:text-emerald-600 text-center px-8 h-14 flex items-center justify-center rounded-xl font-medium transition" data-i18n="cta_investor"></a>
+                </div>
+            </div>
+
+            <!-- Signature element: system flow diagram -->
+            <div class="mt-16 bg-white/70 border border-slate-100 rounded-2xl p-6 lg:p-10 overflow-x-auto">
+                <div class="flex items-center justify-between min-w-[720px] lg:min-w-0">
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-2xl">🩺</div>
+                        <span class="text-xs font-semibold text-slate-600" data-i18n="flow_clinic"></span>
+                    </div>
+                    <div class="flow-line flex-1 mx-2"></div>
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-16 h-16 rounded-2xl bg-emerald-600 shadow-md flex items-center justify-center text-white font-bold mono text-sm">WOS</div>
+                        <span class="text-xs font-bold text-emerald-700" data-i18n="flow_wos"></span>
+                    </div>
+                    <div class="flow-line flex-1 mx-2"></div>
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-2xl">🏨</div>
+                        <span class="text-xs font-semibold text-slate-600" data-i18n="flow_hotel"></span>
+                    </div>
+                    <div class="flow-line flex-1 mx-2"></div>
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-2xl">🚗</div>
+                        <span class="text-xs font-semibold text-slate-600" data-i18n="flow_transport"></span>
+                    </div>
+                    <div class="flow-line flex-1 mx-2"></div>
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-2xl">🥗</div>
+                        <span class="text-xs font-semibold text-slate-600" data-i18n="flow_nutrition"></span>
+                    </div>
+                    <div class="flow-line flex-1 mx-2"></div>
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-2xl">🧭</div>
+                        <span class="text-xs font-semibold text-slate-600" data-i18n="flow_journey"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY WOS EXISTS -->
+    <section id="why" class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-6 space-y-14">
+            <div class="max-w-2xl mx-auto text-center space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-600" data-i18n="why_eyebrow"></p>
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900" data-i18n="why_title"></h2>
+                <p class="text-slate-500" data-i18n="why_sub"></p>
+            </div>
+
+            <!-- Fragmentation vs Connected diagram -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-4">
+                    <p class="mono text-xs font-semibold uppercase tracking-wider text-slate-400" data-i18n="why_before_label"></p>
+                    <div class="space-y-2">
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2"><span>🏥</span><span data-i18n="flow_clinic"></span></div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ <span data-i18n="why_before_gap"></span></div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2"><span>🏨</span><span data-i18n="flow_hotel"></span></div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ <span data-i18n="why_before_gap"></span></div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2"><span>🚗</span><span data-i18n="flow_transport"></span></div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ <span data-i18n="why_before_gap"></span></div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2"><span>🥗</span><span data-i18n="flow_nutrition"></span></div>
+                    </div>
+                    <p class="text-xs text-slate-500 pt-1" data-i18n="why_before_caption"></p>
+                </div>
+                <div class="bg-emerald-600 rounded-2xl p-6 space-y-4 text-white flex flex-col">
+                    <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-100" data-i18n="why_after_label"></p>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-3 py-4">
+                        <div class="w-16 h-16 rounded-2xl bg-white text-emerald-700 font-bold mono text-sm flex items-center justify-center shadow-md">WOS</div>
+                        <div class="grid grid-cols-4 gap-3 text-xl">
+                            <span>🏥</span><span>🏨</span><span>🚗</span><span>🥗</span>
+                        </div>
+                    </div>
+                    <p class="text-sm font-semibold text-center" data-i18n="why_after_caption"></p>
+                </div>
+            </div>
+
+            <blockquote class="text-center text-xl lg:text-2xl font-semibold text-slate-900 max-w-2xl mx-auto leading-snug" data-i18n="why_closing_quote"></blockquote>
+        </div>
+    </section>
+
+    <!-- WHY WOS IS DIFFERENT -->
+    <section id="different" class="py-20 bg-slate-50/50">
+        <div class="max-w-4xl mx-auto px-6 space-y-10">
+            <div class="max-w-xl mx-auto text-center space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-600" data-i18n="diff_eyebrow"></p>
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900" data-i18n="diff_title"></h2>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-100">
+                            <th class="text-left font-semibold text-slate-400 px-6 py-4 w-1/2" data-i18n="diff_col_agency"></th>
+                            <th class="text-left font-semibold text-emerald-700 px-6 py-4 w-1/2 bg-emerald-50/60" data-i18n="diff_col_wos"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="px-6 py-4 text-slate-500" data-i18n="diff_row1_agency"></td>
+                            <td class="px-6 py-4 font-medium text-slate-900 bg-emerald-50/60" data-i18n="diff_row1_wos"></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-500" data-i18n="diff_row2_agency"></td>
+                            <td class="px-6 py-4 font-medium text-slate-900 bg-emerald-50/60" data-i18n="diff_row2_wos"></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-500" data-i18n="diff_row3_agency"></td>
+                            <td class="px-6 py-4 font-medium text-slate-900 bg-emerald-50/60" data-i18n="diff_row3_wos"></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-500" data-i18n="diff_row4_agency"></td>
+                            <td class="px-6 py-4 font-medium text-slate-900 bg-emerald-50/60" data-i18n="diff_row4_wos"></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-500 font-medium" data-i18n="diff_row5_agency"></td>
+                            <td class="px-6 py-4 font-bold text-emerald-700 bg-emerald-50/60" data-i18n="diff_row5_wos"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS / TRACTION -->
+    <section class="py-14 bg-white border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-center mb-8">
+                <span class="mono text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold uppercase tracking-wider" data-i18n="pilot_badge"></span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-emerald-600">15+</div>
+                    <div class="text-xs text-slate-500 mt-1" data-i18n="stat_hotels_label"></div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-emerald-600">4</div>
+                    <div class="text-xs text-slate-500 mt-1" data-i18n="stat_clinics_label"></div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-emerald-600">120+</div>
+                    <div class="text-xs text-slate-500 mt-1" data-i18n="stat_nights_label"></div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-emerald-600">98%</div>
+                    <div class="text-xs text-slate-500 mt-1" data-i18n="stat_satisfaction_label"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW THE SYSTEM WORKS -->
+    <section id="system" class="py-20 bg-slate-50/50">
+        <div class="max-w-7xl mx-auto px-6 text-center space-y-12">
+            <div class="max-w-xl mx-auto space-y-3">
+                <h2 class="text-3xl font-bold tracking-tight" data-i18n="system_title"></h2>
+                <p class="text-slate-500" data-i18n="system_sub"></p>
+            </div>
+            <div class="grid md:grid-cols-5 gap-6 text-left">
+                <div class="bg-white p-6 rounded-xl border border-slate-100 space-y-3">
+                    <div class="text-2xl">🩺</div>
+                    <h3 class="font-semibold text-sm" data-i18n="step1_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="step1_desc"></p>
+                </div>
+                <div class="bg-emerald-600 text-white p-6 rounded-xl border border-emerald-600 space-y-3 shadow-md">
+                    <div class="text-2xl">⚙️</div>
+                    <h3 class="font-semibold text-sm" data-i18n="step2_title"></h3>
+                    <p class="text-xs text-emerald-50" data-i18n="step2_desc"></p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-100 space-y-3">
+                    <div class="text-2xl">🧭</div>
+                    <h3 class="font-semibold text-sm" data-i18n="step3_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="step3_desc"></p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-100 space-y-3">
+                    <div class="text-2xl">🏨</div>
+                    <h3 class="font-semibold text-sm" data-i18n="step4_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="step4_desc"></p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-100 space-y-3">
+                    <div class="text-2xl">✅</div>
+                    <h3 class="font-semibold text-sm" data-i18n="step5_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="step5_desc"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6 space-y-12">
+            <div class="text-center max-w-xl mx-auto space-y-3">
+                <h2 class="text-3xl font-bold tracking-tight" data-i18n="services_title"></h2>
+                <p class="text-slate-500" data-i18n="services_sub"></p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🏥</div>
+                    <h3 class="text-lg font-bold" data-i18n="svc1_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="svc1_desc"></p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🏨</div>
+                    <h3 class="text-lg font-bold" data-i18n="svc2_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="svc2_desc"></p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🚗</div>
+                    <h3 class="text-lg font-bold" data-i18n="svc3_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="svc3_desc"></p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🥗</div>
+                    <h3 class="text-lg font-bold" data-i18n="svc4_title"></h3>
+                    <p class="text-xs text-slate-500" data-i18n="svc4_desc"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CASE STUDY / SANDBOX -->
+    <section id="case-study" class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="bg-slate-50 rounded-3xl border border-slate-100 p-8 lg:p-12 grid lg:grid-cols-2 gap-10 items-center">
+                <div class="space-y-5">
+                    <span class="inline-flex items-center gap-2 bg-amber-100 text-amber-800 text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider mono" data-i18n="case_badge"></span>
+                    <h2 class="text-2xl lg:text-3xl font-bold tracking-tight text-slate-900" data-i18n="case_title"></h2>
+                    <p class="text-slate-600 leading-relaxed" data-i18n="case_body"></p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <div class="mono text-xs font-semibold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-full" data-i18n="case_location"></div>
+                        <div class="mono text-xs font-semibold text-slate-500" data-i18n="case_status"></div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
+                    <p class="mono text-xs font-semibold uppercase tracking-wider text-slate-400" data-i18n="case_timeline_label"></p>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
+                            <span class="text-sm text-slate-700" data-i18n="case_phase1"></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
+                            <span class="text-sm text-slate-700" data-i18n="case_phase2"></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-slate-300 shrink-0"></div>
+                            <span class="text-sm text-slate-400" data-i18n="case_phase3"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ECOSYSTEM -->
+    <section id="ecosystem" class="py-16 bg-slate-950 text-white">
+        <div class="max-w-7xl mx-auto px-6 text-center space-y-10">
+            <div class="max-w-xl mx-auto space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-400">Ecosystem</p>
+                <h2 class="text-3xl font-bold tracking-tight" data-i18n="ecosystem_title"></h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-2">
+                    <div class="text-2xl">🏥</div>
+                    <div class="text-sm font-semibold" data-i18n="eco_hospital"></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-2">
+                    <div class="text-2xl">🏨</div>
+                    <div class="text-sm font-semibold" data-i18n="eco_hotel"></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-2">
+                    <div class="text-2xl">🌿</div>
+                    <div class="text-sm font-semibold" data-i18n="eco_wellness"></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-2">
+                    <div class="text-2xl">🛡️</div>
+                    <div class="text-sm font-semibold" data-i18n="eco_insurance"></div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-6 space-y-2">
+                    <div class="text-2xl">✈️</div>
+                    <div class="text-sm font-semibold" data-i18n="eco_travel"></div>
+                </div>
+            </div>
+            <a href="#partner" class="inline-flex items-center text-sm font-semibold text-emerald-400 hover:text-emerald-300" data-i18n="ecosystem_cta"></a>
+        </div>
+    </section>
+
+    <!-- CASE INTAKE FORM -->
+    <section id="partner" class="py-20 bg-slate-900 text-white relative">
+        <div class="max-w-2xl mx-auto px-6 space-y-8">
+            <div class="text-center space-y-2">
+                <h2 class="text-3xl font-bold" data-i18n="form_title"></h2>
+                <p class="text-slate-400 text-sm" data-i18n="form_sub"></p>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden shadow-xl border border-slate-800 min-h-[600px]">
+                <!-- TODO: replace xxxxxx with the real Tally form ID before deploying -->
+                <iframe class="w-full min-h-[600px] border-0" src="https://tally.so/embed/xxxxxx?hideTitle=1" title="WOS Partner &amp; Case Intake Form" loading="lazy" aria-label="WOS Partner and Case Intake Form"></iframe>
+            </div>
+
+            <div id="investor" class="text-center text-sm text-slate-400">
+                <span data-i18n="investor_line"></span> <a href="#" class="text-amber-400 hover:text-amber-300 font-semibold" data-i18n="investor_link"></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-950 text-slate-500 py-12 border-t border-slate-900 text-sm">
+        <div class="max-w-7xl mx-auto px-6 space-y-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-white font-bold text-lg mb-2">WOS<span class="text-amber-500 mono">.os</span></div>
+                    <p class="text-xs text-slate-500" data-i18n="footer_tagline"></p>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3" data-i18n="footer_partner_heading"></div>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#partner" class="hover:text-white" data-i18n="footer_for_hospital"></a></li>
+                        <li><a href="#partner" class="hover:text-white" data-i18n="footer_for_hotel"></a></li>
+                        <li><a href="#investor" class="hover:text-white" data-i18n="footer_for_investor"></a></li>
+                        <li><a href="#" class="hover:text-white" data-i18n="footer_career"></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3" data-i18n="footer_system_heading"></div>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#system" class="hover:text-white" data-i18n="nav_system"></a></li>
+                        <li><a href="#services" class="hover:text-white" data-i18n="nav_services"></a></li>
+                        <li><a href="#ecosystem" class="hover:text-white" data-i18n="nav_ecosystem"></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3" data-i18n="footer_contact_heading"></div>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" class="hover:text-white">LINE OA</a></li>
+                        <li><a href="#" class="hover:text-white">WhatsApp</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="tel:+66855907666" class="hover:text-white" data-i18n="footer_phone"></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-900 pt-6 text-center text-xs space-y-1">
+                <p data-i18n="footer_company_line"></p>
+                <p data-i18n="footer_copyright"></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/wos-landing.js" defer></script>
+
+</body>
+</html>

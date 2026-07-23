@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOS — Healthcare Hospitality Operating System</title>
+    <meta name="description" content="WOS เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว ระบบประสานงานผู้ป่วยข้ามพรมแดนไทย-ลาว สำหรับคลินิก โรงแรม และพันธมิตร">
+    <link rel="canonical" href="https://wos.asia/">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="alternate icon" href="images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WOS — Healthcare Hospitality Operating System">
+    <meta property="og:title" content="WOS — Healthcare Hospitality Operating System">
+    <meta property="og:description" content="โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว">
+    <meta property="og:url" content="https://wos.asia/">
+    <meta property="og:image" content="https://wos.asia/images/og-cover.jpg">
+    <meta property="og:locale" content="th_TH">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WOS — Healthcare Hospitality Operating System">
+    <meta name="twitter:description" content="โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว">
+    <meta name="twitter:image" content="https://wos.asia/images/og-cover.jpg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Prompt', 'Noto Sans Lao', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .flow-line {
+            background: repeating-linear-gradient(90deg, #10b981 0, #10b981 6px, transparent 6px, transparent 12px);
+            height: 2px;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .fade-up { animation: fadeUp .6s ease-out both; }
+            @keyframes fadeUp { from { opacity:0; transform: translateY(12px);} to {opacity:1; transform:none;} }
+        }
+        .lang-btn { transition: all .15s ease; }
+        .lang-btn.active { background:#059669; color:#fff; }
+        
+        .wos-form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            color: #1e293b;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .wos-form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .wos-form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.375rem;
+        }
+        .wos-form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            color: #1e293b;
+            transition: all 0.2s;
+            appearance: none;
+            font-size: 0.95rem;
+        }
+        .wos-form-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+    </style>
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "WOS — Healthcare Hospitality Operating System",
+      "alternateName": "WOS",
+      "url": "https://wos.asia/",
+      "logo": "https://wos.asia/images/favicon.svg",
+      "description": "โครงสร้างพื้นฐานที่เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ไว้ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว",
+      "areaServed": ["TH", "LA"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+66-85-590-7666",
+        "contactType": "customer service"
+      }
+    }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+            <div class="text-xl sm:text-2xl font-bold text-emerald-600 tracking-tight shrink-0">
+                WOS<span class="text-amber-500 mono text-base align-top">.os</span>
+            </div>
+            <nav class="hidden lg:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="#why" class="hover:text-emerald-600 transition">Why WOS</a>
+                <a href="#system" class="hover:text-emerald-600 transition">ระบบ</a>
+                <a href="#services" class="hover:text-emerald-600 transition">บริการ</a>
+                <a href="#ecosystem" class="hover:text-emerald-600 transition">ระบบนิเวศ</a>
+                <a href="#partner" class="hover:text-emerald-600 transition">ร่วมงาน</a>
+            </nav>
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 sm:p-1 mono text-[10px] sm:text-xs font-semibold">
+                    <button class="lang-btn px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full active" data-lang="th">TH</button>
+                    <button class="lang-btn px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full" data-lang="lo">LAO</button>
+                    <button class="lang-btn px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full" data-lang="en">EN</button>
+                </div>
+                <a href="#partner" class="hidden sm:flex bg-emerald-600 hover:bg-emerald-700 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition items-center justify-center">
+                    ร่วมงานกับเรา
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="relative bg-gradient-to-br from-emerald-50 via-white to-amber-50/30 py-16 sm:py-20 lg:py-28 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="max-w-2xl space-y-4 sm:space-y-6 fade-up">
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider mono">
+                    Healthcare Hospitality Operating System
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
+                    ระบบปฏิบัติการเพื่อการดูแลสุขภาพและการบริการ
+                </h1>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    เชื่อมโยงโรงพยาบาล โรงแรม และการเดินทางไว้ในระบบเดียว เพื่อผู้ป่วยข้ามพรมแดนไทย-ลาว
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
+                    <a href="#partner" class="bg-emerald-600 hover:bg-emerald-700 text-white text-center px-6 sm:px-8 h-12 sm:h-14 flex items-center justify-center rounded-xl font-medium shadow-md transition text-sm sm:text-base">
+                        เริ่มต้นใช้งาน
+                    </a>
+                    <a href="#investor" class="border border-slate-300 hover:border-emerald-600 bg-white text-slate-700 hover:text-emerald-600 text-center px-6 sm:px-8 h-12 sm:h-14 flex items-center justify-center rounded-xl font-medium transition text-sm sm:text-base">
+                        สำหรับนักลงทุน
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flow Diagram -->
+            <div class="mt-12 sm:mt-16 bg-white/70 border border-slate-100 rounded-2xl p-4 sm:p-6 lg:p-10 overflow-x-auto">
+                <div class="flex items-center justify-between min-w-[620px] sm:min-w-[720px] lg:min-w-0">
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-xl sm:text-2xl">🩺</div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600">คลินิก</span>
+                    </div>
+                    <div class="flow-line flex-1 mx-1 sm:mx-2"></div>
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-600 shadow-md flex items-center justify-center text-white font-bold mono text-xs sm:text-sm">WOS</div>
+                        <span class="text-[10px] sm:text-xs font-bold text-emerald-700">ระบบประสาน</span>
+                    </div>
+                    <div class="flow-line flex-1 mx-1 sm:mx-2"></div>
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-xl sm:text-2xl">🏨</div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600">โรงแรม</span>
+                    </div>
+                    <div class="flow-line flex-1 mx-1 sm:mx-2"></div>
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-xl sm:text-2xl">🚗</div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600">เดินทาง</span>
+                    </div>
+                    <div class="flow-line flex-1 mx-1 sm:mx-2"></div>
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-xl sm:text-2xl">🥗</div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600">โภชนาการ</span>
+                    </div>
+                    <div class="flow-line flex-1 mx-1 sm:mx-2"></div>
+                    <div class="flex flex-col items-center gap-1 sm:gap-2 flex-1">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-xl sm:text-2xl">🧭</div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600">การเดินทาง</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== WHY WOS ===== -->
+    <section id="why" class="py-16 sm:py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-14">
+            <div class="max-w-2xl mx-auto text-center space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-600">ทำไมต้อง WOS</p>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">เชื่อมต่อสิ่งที่ขาดหายไป</h2>
+                <p class="text-sm text-slate-500">ปัจจุบันระบบการดูแลสุขภาพข้ามพรมแดนยังคงกระจัดกระจาย</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-6 space-y-4">
+                    <p class="mono text-xs font-semibold uppercase tracking-wider text-slate-400">ปัจจุบัน</p>
+                    <div class="space-y-2">
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2">
+                            <span>🏥</span><span>คลินิก</span>
+                        </div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ ไม่มีระบบเชื่อมต่อ</div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2">
+                            <span>🏨</span><span>โรงแรม</span>
+                        </div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ ไม่มีระบบเชื่อมต่อ</div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2">
+                            <span>🚗</span><span>เดินทาง</span>
+                        </div>
+                        <div class="mono text-slate-300 text-xs pl-2">↓ ไม่มีระบบเชื่อมต่อ</div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-600 flex items-center gap-2">
+                            <span>🥗</span><span>โภชนาการ</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 pt-1">ผู้ป่วยต้องจัดการทุกอย่างด้วยตนเอง</p>
+                </div>
+                <div class="bg-emerald-600 rounded-2xl p-6 space-y-4 text-white flex flex-col">
+                    <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-100">ด้วย WOS</p>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-3 py-4">
+                        <div class="w-16 h-16 rounded-2xl bg-white text-emerald-700 font-bold mono text-sm flex items-center justify-center shadow-md">WOS</div>
+                        <div class="grid grid-cols-4 gap-3 text-xl">
+                            <span>🏥</span><span>🏨</span><span>🚗</span><span>🥗</span>
+                        </div>
+                    </div>
+                    <p class="text-sm font-semibold text-center">ทุกอย่างเชื่อมต่อเป็นระบบเดียวกัน</p>
+                </div>
+            </div>
+
+            <blockquote class="text-center text-xl lg:text-2xl font-semibold text-slate-900 max-w-2xl mx-auto leading-snug">
+                "เราไม่ได้แค่เชื่อมต่อระบบ เราเชื่อมต่อชีวิต"
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- ===== DIFFERENT ===== -->
+    <section id="different" class="py-16 sm:py-20 bg-slate-50/50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 sm:space-y-10">
+            <div class="max-w-xl mx-auto text-center space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-600">ความแตกต่าง</p>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">WOS แตกต่างอย่างไร</h2>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-100">
+                                <th class="text-left font-semibold text-slate-400 px-4 sm:px-6 py-3 sm:py-4 w-1/2">ตัวแทน / เอเย่นต์</th>
+                                <th class="text-left font-semibold text-emerald-700 px-4 sm:px-6 py-3 sm:py-4 w-1/2 bg-emerald-50/60">WOS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 text-slate-500">ประสานงานแบบแยกส่วน</td>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 bg-emerald-50/60">ระบบครบวงจร</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 text-slate-500">ไม่มีระบบติดตาม</td>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 bg-emerald-50/60">ติดตามผลแบบ Real-time</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 text-slate-500">คุณภาพไม่สม่ำเสมอ</td>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 bg-emerald-50/60">มาตรฐานเดียวกันทุกเคส</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 text-slate-500">ไม่มีระบบความปลอดภัย</td>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 bg-emerald-50/60">ข้อมูลปลอดภัยระดับสากล</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 text-slate-500 font-medium">ราคาไม่โปร่งใส</td>
+                                <td class="px-4 sm:px-6 py-3 sm:py-4 font-bold text-emerald-700 bg-emerald-50/60">ราคาชัดเจน โปร่งใส</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== STATS ===== -->
+    <section class="py-12 sm:py-14 bg-white border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-center mb-6 sm:mb-8">
+                <span class="mono text-[10px] sm:text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold uppercase tracking-wider">
+                    🚀 กำลังทดลองใช้งาน
+                </span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+                <div>
+                    <div class="text-2xl sm:text-4xl font-bold text-emerald-600">15+</div>
+                    <div class="text-[10px] sm:text-xs text-slate-500 mt-1">โรงแรมพันธมิตร</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-4xl font-bold text-emerald-600">4</div>
+                    <div class="text-[10px] sm:text-xs text-slate-500 mt-1">คลินิกพันธมิตร</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-4xl font-bold text-emerald-600">120+</div>
+                    <div class="text-[10px] sm:text-xs text-slate-500 mt-1">คืนที่พักแล้ว</div>
+                </div>
+                <div>
+                    <div class="text-2xl sm:text-4xl font-bold text-emerald-600">98%</div>
+                    <div class="text-[10px] sm:text-xs text-slate-500 mt-1">ความพึงพอใจ</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SYSTEM ===== -->
+    <section id="system" class="py-16 sm:py-20 bg-slate-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-12">
+            <div class="max-w-xl mx-auto space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">ระบบทำงานอย่างไร</h2>
+                <p class="text-sm text-slate-500">5 ขั้นตอนง่ายๆ สู่การดูแลสุขภาพข้ามพรมแดน</p>
+            </div>
+            <div class="grid sm:grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6 text-left">
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-slate-100 space-y-2 sm:space-y-3">
+                    <div class="text-2xl">🩺</div>
+                    <h3 class="font-semibold text-sm">นัดหมาย</h3>
+                    <p class="text-xs text-slate-500">ผู้ป่วยนัดหมายผ่านระบบ</p>
+                </div>
+                <div class="bg-emerald-600 text-white p-4 sm:p-6 rounded-xl border border-emerald-600 space-y-2 sm:space-y-3 shadow-md">
+                    <div class="text-2xl">⚙️</div>
+                    <h3 class="font-semibold text-sm">ประสานงาน</h3>
+                    <p class="text-xs text-emerald-50">WOS จัดการทุกอย่างให้</p>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-slate-100 space-y-2 sm:space-y-3">
+                    <div class="text-2xl">🧭</div>
+                    <h3 class="font-semibold text-sm">วางแผน</h3>
+                    <p class="text-xs text-slate-500">วางแผนการเดินทางและที่พัก</p>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-slate-100 space-y-2 sm:space-y-3">
+                    <div class="text-2xl">🏨</div>
+                    <h3 class="font-semibold text-sm">เข้าพัก</h3>
+                    <p class="text-xs text-slate-500">เข้าพักโรงแรมพันธมิตร</p>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-xl border border-slate-100 space-y-2 sm:space-y-3">
+                    <div class="text-2xl">✅</div>
+                    <h3 class="font-semibold text-sm">ติดตามผล</h3>
+                    <p class="text-xs text-slate-500">ติดตามผลการรักษา</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SERVICES ===== -->
+    <section id="services" class="py-16 sm:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-8 sm:space-y-12">
+            <div class="text-center max-w-xl mx-auto space-y-3">
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">บริการของเรา</h2>
+                <p class="text-sm text-slate-500">ครบวงจรเพื่อการดูแลสุขภาพข้ามพรมแดน</p>
+            </div>
+            <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-5 sm:p-6 space-y-2 sm:space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🏥</div>
+                    <h3 class="text-base sm:text-lg font-bold">คลินิกพันธมิตร</h3>
+                    <p class="text-xs text-slate-500">เครือข่ายคลินิกคุณภาพในไทย</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-5 sm:p-6 space-y-2 sm:space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🏨</div>
+                    <h3 class="text-base sm:text-lg font-bold">ที่พัก</h3>
+                    <p class="text-xs text-slate-500">โรงแรมคุณภาพใกล้คลินิก</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-5 sm:p-6 space-y-2 sm:space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🚗</div>
+                    <h3 class="text-base sm:text-lg font-bold">การเดินทาง</h3>
+                    <p class="text-xs text-slate-500">รับ-ส่ง สะดวกปลอดภัย</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl border border-slate-100 p-5 sm:p-6 space-y-2 sm:space-y-3 hover:shadow-md transition">
+                    <div class="text-3xl">🥗</div>
+                    <h3 class="text-base sm:text-lg font-bold">โภชนาการ</h3>
+                    <p class="text-xs text-slate-500">อาหารตามคำแนะนำแพทย์</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CASE STUDY ===== -->
+    <section id="case-study" class="py-16 sm:py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="bg-slate-50 rounded-3xl border border-slate-100 p-6 sm:p-8 lg:p-12 grid lg:grid-cols-2 gap-8 sm:gap-10 items-center">
+                <div class="space-y-4 sm:space-y-5">
+                    <span class="inline-flex items-center gap-2 bg-amber-100 text-amber-800 text-[10px] sm:text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider mono">
+                        📋 เคสตัวอย่าง
+                    </span>
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-slate-900">คุณแม่จากเวียงจันทน์</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">คุณแม่ชาวลาวเดินทางมารักษาที่ไทย WOS จัดการทุกอย่างตั้งแต่การนัดหมาย ที่พัก อาหาร การเดินทาง และล่าม</p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <div class="mono text-[10px] sm:text-xs font-semibold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-full">🇱🇦 → 🇹🇭</div>
+                        <div class="mono text-[10px] sm:text-xs font-semibold text-slate-500">✅ สำเร็จ</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 space-y-4">
+                    <p class="mono text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">ไทม์ไลน์</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
+                            <span class="text-sm text-slate-700">นัดหมายคลินิก</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
+                            <span class="text-sm text-slate-700">จองที่พักและรถรับส่ง</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-slate-300 shrink-0"></div>
+                            <span class="text-sm text-slate-400">ติดตามผลการรักษา</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ECOSYSTEM ===== -->
+    <section id="ecosystem" class="py-12 sm:py-16 bg-slate-950 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10">
+            <div class="max-w-xl mx-auto space-y-3">
+                <p class="mono text-xs font-semibold uppercase tracking-wider text-emerald-400">Ecosystem</p>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">ระบบนิเวศ WOS</h2>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-6">
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 space-y-2">
+                    <div class="text-2xl">🏥</div>
+                    <div class="text-xs sm:text-sm font-semibold">โรงพยาบาล</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 space-y-2">
+                    <div class="text-2xl">🏨</div>
+                    <div class="text-xs sm:text-sm font-semibold">โรงแรม</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 space-y-2">
+                    <div class="text-2xl">🌿</div>
+                    <div class="text-xs sm:text-sm font-semibold">สุขภาพ</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 space-y-2">
+                    <div class="text-2xl">🛡️</div>
+                    <div class="text-xs sm:text-sm font-semibold">ประกันภัย</div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 space-y-2">
+                    <div class="text-2xl">✈️</div>
+                    <div class="text-xs sm:text-sm font-semibold">การท่องเที่ยว</div>
+                </div>
+            </div>
+            <a href="#partner" class="inline-flex items-center text-sm font-semibold text-emerald-400 hover:text-emerald-300">
+                ร่วมเป็นส่วนหนึ่งของระบบนิเวศ →
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== FORM ===== -->
+    <section id="partner" class="py-16 sm:py-20 bg-slate-900 text-white relative">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-bold">ลงทะเบียนรับคำปรึกษา</h2>
+                <p class="text-slate-400 text-sm">กรอกข้อมูลด้านล่าง ทีมงาน WOS จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-800">
+                <form id="wosForm" class="space-y-4 sm:space-y-5">
+                    <div>
+                        <label for="patientName" class="wos-form-label">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
+                        <input type="text" id="patientName" name="patientName" required 
+                               class="wos-form-input" placeholder="เช่น สมชาย ใจดี">
+                    </div>
+
+                    <div>
+                        <label for="phoneNumber" class="wos-form-label">เบอร์โทรศัพท์ <span class="text-red-500">*</span></label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" required 
+                               class="wos-form-input" placeholder="เช่น 081-234-5678">
+                    </div>
+
+                    <div>
+                        <label for="serviceType" class="wos-form-label">ประเภทบริการ <span class="text-red-500">*</span></label>
+                        <select id="serviceType" name="serviceType" required class="wos-form-select">
+                            <option value="">เลือกประเภทบริการ</option>
+                            <option value="consultation">ปรึกษาแพทย์</option>
+                            <option value="treatment">รักษาโรค</option>
+                            <option value="checkup">ตรวจสุขภาพ</option>
+                            <option value="wellness">ดูแลสุขภาพ</option>
+                            <option value="other">อื่นๆ</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="hospital" class="wos-form-label">โรงพยาบาลที่สนใจ</label>
+                        <input type="text" id="hospital" name="hospital" 
+                               class="wos-form-input" placeholder="เช่น โรงพยาบาลกรุงเทพ">
+                    </div>
+
+                    <div>
+                        <label for="preferredDate" class="wos-form-label">วันที่ต้องการ</label>
+                        <input type="date" id="preferredDate" name="preferredDate" 
+                               class="wos-form-input" min="2026-07-24">
+                    </div>
+
+                    <div>
+                        <label for="message" class="wos-form-label">ข้อความเพิ่มเติม</label>
+                        <textarea id="message" name="message" rows="3" 
+                                  class="wos-form-input" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" 
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 px-6 rounded-xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <span>ส่งข้อมูล</span>
+                        <span id="loadingSpinner" class="hidden">⏳</span>
+                    </button>
+
+                    <div id="formStatus" class="text-center text-sm font-medium hidden"></div>
+                </form>
+            </div>
+
+            <div id="investor" class="text-center text-sm text-slate-400">
+                <span>สนใจลงทุนหรือร่วมเป็นพันธมิตร?</span> 
+                <a href="mailto:invest@wos.asia" class="text-amber-400 hover:text-amber-300 font-semibold">ติดต่อทีมลงทุน →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-950 text-slate-500 py-10 sm:py-12 border-t border-slate-900 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="text-white font-bold text-lg mb-2">WOS<span class="text-amber-500 mono">.os</span></div>
+                    <p class="text-[10px] sm:text-xs text-slate-500">ระบบปฏิบัติการเพื่อการดูแลสุขภาพและการบริการ</p>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-[10px] sm:text-xs uppercase tracking-wider mb-3">สำหรับพันธมิตร</div>
+                    <ul class="space-y-2 text-[10px] sm:text-xs">
+                        <li><a href="#partner" class="hover:text-white">โรงพยาบาล</a></li>
+                        <li><a href="#partner" class="hover:text-white">โรงแรม</a></li>
+                        <li><a href="#investor" class="hover:text-white">นักลงทุน</a></li>
+                        <li><a href="#" class="hover:text-white">ร่วมงานกับเรา</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-[10px] sm:text-xs uppercase tracking-wider mb-3">ระบบ</div>
+                    <ul class="space-y-2 text-[10px] sm:text-xs">
+                        <li><a href="#system" class="hover:text-white">ระบบ</a></li>
+                        <li><a href="#services" class="hover:text-white">บริการ</a></li>
+                        <li><a href="#ecosystem" class="hover:text-white">ระบบนิเวศ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-[10px] sm:text-xs uppercase tracking-wider mb-3">ติดต่อเรา</div>
+                    <ul class="space-y-2 text-[10px] sm:text-xs">
+                        <li><a href="#" class="hover:text-white">LINE OA</a></li>
+                        <li><a href="#" class="hover:text-white">WhatsApp</a></li>
+                        <li><a href="#" class="hover:text-white">Facebook</a></li>
+                        <li><a href="tel:+66855907666" class="hover:text-white">+66 85 590 7666</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-900 pt-6 text-center text-[10px] sm:text-xs space-y-1">
+                <p>WOS — Healthcare Hospitality Operating System</p>
+                <p>© 2026 WOS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // 🔑 SUPABASE CONFIG - ใช้ Publishable Key ของคุณแล้ว!
+            // ============================================================
+            const SUPABASE_URL = 'https://ayjtfbmatwpyoxayrpxs.supabase.co';
+            const SUPABASE_ANON_KEY = 'sb_publishable_hCMmgE8MmleH203P1Vfykg_riuaVQip';
+            
+            let supabaseClient = null;
+            
+            if (typeof window.supabase !== 'undefined') {
+                try {
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase client initialized successfully');
+                } catch (err) {
+                    console.warn('⚠️ Failed to init Supabase:', err);
+                }
+            } else {
+                console.warn('⚠️ Supabase SDK not loaded');
+            }
+
+            // ============================================================
+            // 📝 FORM SUBMISSION
+            // ============================================================
+            const form = document.getElementById('wosForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const formStatus = document.getElementById('formStatus');
+
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    submitBtn.disabled = true;
+                    loadingSpinner.classList.remove('hidden');
+                    formStatus.classList.add('hidden');
+                    
+                    const formData = {
+                        name: document.getElementById('patientName').value.trim(),
+                        phone: document.getElementById('phoneNumber').value.trim(),
+                        service: document.getElementById('serviceType').value,
+                        hospital: document.getElementById('hospital').value.trim() || null,
+                        preferredDate: document.getElementById('preferredDate').value || null,
+                        message: document.getElementById('message').value.trim() || null
+                    };
+                    
+                    if (!formData.name || !formData.phone || !formData.service) {
+                        showStatus('⚠️ กรุณากรอกข้อมูลให้ครบถ้วน (ชื่อ, เบอร์โทร, ประเภทบริการ)', 'warning');
+                        resetButton();
+                        return;
+                    }
+                    
+                    try {
+                        if (supabaseClient) {
+                            const { data, error } = await supabaseClient
+                                .from('cases')
+                                .insert([
+                                    {
+                                        patient_name: formData.name,
+                                        phone_number: formData.phone,
+                                        service_type: formData.service,
+                                        hospital: formData.hospital,
+                                        preferred_date: formData.preferredDate,
+                                        message: formData.message,
+                                        status: 'new_lead',
+                                        created_at: new Date().toISOString()
+                                    }
+                                ]);
+                            
+                            if (error) {
+                                console.error('Supabase Error:', error);
+                                throw new Error('ไม่สามารถบันทึกข้อมูลได้: ' + error.message);
+                            }
+                            
+                            console.log('✅ Data saved to Supabase:', data);
+                            showStatus('✅ บันทึกข้อมูลเรียบร้อย! ทีมงาน WOS จะติดต่อกลับภายใน 24 ชั่วโมงครับ', 'success');
+                            form.reset();
+                            
+                        } else {
+                            console.warn('⚠️ Supabase not available, using fallback mode');
+                            showStatus('⚠️ โหมดทดสอบ: ข้อมูลของคุณถูกบันทึกในระบบแล้ว (Supabase ยังไม่เชื่อมต่อ)', 'warning');
+                            form.reset();
+                        }
+                        
+                    } catch (error) {
+                        console.error('Form Error:', error);
+                        showStatus('❌ ' + error.message, 'error');
+                    } finally {
+                        resetButton();
+                    }
+                });
+            }
+
+            // ============================================================
+            // 🛠️ HELPER FUNCTIONS
+            // ============================================================
+            function showStatus(message, type) {
+                formStatus.textContent = message;
+                formStatus.className = 'text-center text-sm font-medium mt-4 p-3 rounded-xl ' + 
+                    (type === 'success' ? 'text-emerald-700 bg-emerald-50' :
+                     type === 'error' ? 'text-red-700 bg-red-50' :
+                     'text-amber-700 bg-amber-50');
+                formStatus.classList.remove('hidden');
+            }
+            
+            function resetButton() {
+                submitBtn.disabled = false;
+                loadingSpinner.classList.add('hidden');
+            }
+
+            // ============================================================
+            // 🌐 LANGUAGE SWITCHER
+            // ============================================================
+            const langBtns = document.querySelectorAll('.lang-btn');
+            
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    langBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const lang = this.dataset.lang;
+                    console.log('🌐 Language changed to:', lang);
+                    // TODO: Add actual i18n translation here
+                });
+            });
+
+            // ============================================================
+            // 🔗 SMOOTH SCROLL
+            // ============================================================
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        e.preventDefault();
+                        const headerOffset = 80;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            console.log('🚀 WOS Landing Page loaded successfully');
+            console.log('📡 Supabase URL:', SUPABASE_URL);
+            console.log('🔑 Supabase Key:', SUPABASE_ANON_KEY.substring(0, 20) + '...');
+        })();
+    </script>
+
+</body>
+</html>

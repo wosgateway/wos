@@ -13,6 +13,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="css/style.css" />
+    <style>
+        /* Category card photos — sits inside the existing .icon-wrap box */
+        .category-card .icon-wrap {
+            overflow: hidden;
+            padding: 0;
+        }
+        .category-card .icon-wrap .cat-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: inherit;
+        }
+    </style>
 </head>
 <body class="bg-slate-50">
 
@@ -73,12 +87,18 @@
         function renderCategories() {
             const lang = window.getCurrentLang();
             const grid = document.getElementById('categoryGrid');
-            grid.innerHTML = window.WOS_CATEGORIES.map(cat => `
+            grid.innerHTML = window.WOS_CATEGORIES.map(cat => {
+                const label = cat.label[lang] || cat.label.th;
+                const iconHtml = cat.image
+                    ? `<img src="${cat.image}" alt="${label}" class="cat-img" loading="lazy" />`
+                    : cat.icon;
+                return `
                 <a href="category.html?slug=${cat.slug}" class="category-card card-shadow">
-                    <div class="icon-wrap">${cat.icon}</div>
-                    <div class="cat-label">${cat.label[lang] || cat.label.th}</div>
+                    <div class="icon-wrap">${iconHtml}</div>
+                    <div class="cat-label">${label}</div>
                 </a>
-            `).join('');
+            `;
+            }).join('');
         }
 
         renderCategories();

@@ -63,7 +63,7 @@
         {
             slug: 'spa',
             icon: '💆',
-            image: null, // TODO: no dedicated photo yet — swap in a spa image when available
+            image: 'images/spa.webp',
             dbCategories: ['Spa'],
             label: { th: 'สปา & ผ่อนคลาย', lo: 'ສະປາ & ພັກຜ່ອນ', en: 'Spa & Relaxation' }
         },

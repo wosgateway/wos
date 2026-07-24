@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS — สำหรับพันธมิตรทางธุรกิจ</title>
+    <meta name="description" content="สมัครเป็นพันธมิตรกับ WOS เชื่อมต่อธุรกิจของคุณกับระบบนิเวศ Healthcare Hospitality ครบวงจร" />
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link rel="stylesheet" href="css/style.css" />
+    
+
+</head>
+<body>
+
+    <!-- ===== TOP ANNOUNCEMENT BAR ===== -->
+    <div class="announcement-bar" id="announcementBar">
+        <span>
+            🔬 <span class="lang-content active" data-lang="th">ระบบรายงานผู้ป่วยออนไลน์ — เข้าถึงผลตรวจและประวัติการรักษาของคุณได้ทุกที่ทุกเวลา</span>
+            <span class="lang-content" data-lang="lo">ລະບົບລາຍງານຄົນເຈັບອອນລາຍ — ເຂົ້າເຖິງຜົນກວດ ແລະ ປະຫວັດການຮັກສາຂອງທ່ານໄດ້ທຸກທີ່ທຸກເວລາ</span>
+            <span class="lang-content" data-lang="en">🔬 Access Your Clinical Reports — View test results and medical records anytime, anywhere</span>
+        </span>
+        <button class="close-btn" onclick="document.getElementById('announcementBar').style.display='none'" aria-label="ปิดประกาศ">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-bold text-primary tracking-tight">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                <a href="index.html#why" class="hover:text-primary transition">Why WOS</a>
+                <a href="services.html" class="hover:text-primary transition">Services</a>
+                <a href="partner.html" class="text-primary font-semibold">สำหรับพันธมิตร</a>
+            </nav>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <a href="services.html" class="text-sm font-medium text-primary hover:text-primary-dark">รับบริการ</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== HERO B2B ===== -->
+    <section class="bg-gradient-to-br from-amber-50 via-white to-primary-light/30 py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">
+                <span class="lang-content active" data-lang="th">ร่วมเป็นพันธมิตรกับ WOS</span>
+                <span class="lang-content" data-lang="lo">ຮ່ວມເປັນຄູ່ຮ່ວມງານກັບ WOS</span>
+                <span class="lang-content" data-lang="en">Join as a WOS Partner</span>
+            </h1>
+            <p class="text-slate-600 mt-3 max-w-2xl mx-auto">
+                <span class="lang-content active" data-lang="th">ขยายธุรกิจของคุณสู่ระบบนิเวศ Healthcare Hospitality ที่เติบโตเร็วที่สุดในภูมิภาค พร้อมเชื่อมต่อกับผู้ป่วยข้ามพรมแดนกว่า 1,000+ รายต่อเดือน</span>
+                <span class="lang-content" data-lang="lo">ຂະຫຍາຍທຸລະກິດຂອງທ່ານສູ່ລະບົບນິເວດ Healthcare Hospitality ທີ່ເຕີບໂຕໄວທີ່ສຸດໃນພາກພື້ນ ພ້ອມເຊື່ອມຕໍ່ກັບຄົນເຈັບຂ້າມແດນກວ່າ 1,000+ ຄົນຕໍ່ເດືອນ</span>
+                <span class="lang-content" data-lang="en">Expand your business into the fastest-growing Healthcare Hospitality ecosystem in the region, connecting with 1,000+ cross-border patients per month</span>
+            </p>
+            <div class="mt-8 rounded-3xl overflow-hidden card-shadow shadow-xl max-w-3xl mx-auto">
+                <img
+                    src="images/hero/hero-partner.webp"
+                    alt="การจับมือทางธุรกิจระหว่าง WOS และพันธมิตร"
+                    class="w-full h-full object-cover aspect-[2/1]"
+                    loading="lazy"
+                />
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BENEFITS ===== -->
+    <section class="py-12 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <h2 class="text-2xl font-bold text-slate-900 mb-8 text-center">
+                <span class="lang-content active" data-lang="th">ประโยชน์ที่คุณจะได้รับ</span>
+                <span class="lang-content" data-lang="lo">ຜົນປະໂຫຍດທີ່ທ່ານຈະໄດ້ຮັບ</span>
+                <span class="lang-content" data-lang="en">Benefits You'll Get</span>
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 text-center card-shadow">
+                    <div class="text-4xl mb-3">📈</div>
+                    <h3 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">เพิ่มจำนวนผู้ใช้บริการ</span>
+                        <span class="lang-content" data-lang="lo">ເພີ່ມຈຳນວນຜູ້ໃຊ້ບໍລິການ</span>
+                        <span class="lang-content" data-lang="en">Increase Customers</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">เชื่อมต่อกับผู้ป่วยข้ามพรมแดนกว่า 1,000+ รายต่อเดือน</span>
+                        <span class="lang-content" data-lang="lo">ເຊື່ອມຕໍ່ກັບຄົນເຈັບຂ້າມແດນກວ່າ 1,000+ ຄົນຕໍ່ເດືອນ</span>
+                        <span class="lang-content" data-lang="en">Connect with 1,000+ cross-border patients per month</span>
+                    </p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 text-center card-shadow">
+                    <div class="text-4xl mb-3">🔗</div>
+                    <h3 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ระบบเชื่อมต่ออัจฉริยะ</span>
+                        <span class="lang-content" data-lang="lo">ລະບົບເຊື່ອມຕໍ່ອັດສະລິຍະ</span>
+                        <span class="lang-content" data-lang="en">Smart Integration</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">รับการแจ้งเตือนและจัดการเคสผ่าน Dashboard กลาง</span>
+                        <span class="lang-content" data-lang="lo">ຮັບການແຈ້ງເຕືອນ ແລະ ຈັດການເຄສຜ່ານ Dashboard ກາງ</span>
+                        <span class="lang-content" data-lang="en">Receive alerts and manage cases via central Dashboard</span>
+                    </p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 text-center card-shadow">
+                    <div class="text-4xl mb-3">🌏</div>
+                    <h3 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ขยายฐานลูกค้าต่างประเทศ</span>
+                        <span class="lang-content" data-lang="lo">ຂະຫຍາຍຖານລູກຄ້າຕ່າງປະເທດ</span>
+                        <span class="lang-content" data-lang="en">Expand International Reach</span>
+                    </h3>
+                    <p class="text-sm text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">เข้าถึงกลุ่มผู้ป่วยชาวลาวที่กำลังมองหาบริการคุณภาพในไทย</span>
+                        <span class="lang-content" data-lang="lo">ເຂົ້າເຖິງກຸ່ມຄົນເຈັບລາວທີ່ກຳລັງຊອກຫາບໍລິການຄຸນນະພາບໃນໄທ</span>
+                        <span class="lang-content" data-lang="en">Reach Lao patients seeking quality services in Thailand</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="py-12 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 class="text-2xl font-bold text-slate-900 mb-8 text-center">
+                <span class="lang-content active" data-lang="th">ขั้นตอนการสมัคร</span>
+                <span class="lang-content" data-lang="lo">ຂັ້ນຕອນການສະໝັກ</span>
+                <span class="lang-content" data-lang="en">How to Apply</span>
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">กรอกข้อมูล</span>
+                        <span class="lang-content" data-lang="lo">ກອກຂໍ້ມູນ</span>
+                        <span class="lang-content" data-lang="en">Fill in Info</span>
+                    </h4>
+                    <p class="text-sm text-slate-500">กรอกข้อมูลธุรกิจของคุณในฟอร์มด้านล่าง</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ทีมงานติดต่อกลับ</span>
+                        <span class="lang-content" data-lang="lo">ທີມງານຕິດຕໍ່ກັບຄືນ</span>
+                        <span class="lang-content" data-lang="en">Team Contacts You</span>
+                    </h4>
+                    <p class="text-sm text-slate-500">ทีมงาน WOS จะติดต่อกลับภายใน 24 ชั่วโมง</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">เริ่มต้นร่วมงาน</span>
+                        <span class="lang-content" data-lang="lo">ເລີ່ມຕົ້ນຮ່ວມງານ</span>
+                        <span class="lang-content" data-lang="en">Start Partnership</span>
+                    </h4>
+                    <p class="text-sm text-slate-500">เข้าใช้งานระบบและรับเคสผู้ป่วยทันที</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FORM B2B ===== -->
+    <section class="py-12 bg-white">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6">
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+                <h2 class="text-xl font-bold text-slate-900 mb-6">
+                    <span class="lang-content active" data-lang="th">🤝 สมัครเป็นพันธมิตรธุรกิจ</span>
+                    <span class="lang-content" data-lang="lo">🤝 ສະໝັກເປັນຄູ່ຮ່ວມງານທຸລະກິດ</span>
+                    <span class="lang-content" data-lang="en">🤝 Apply as Business Partner</span>
+                </h2>
+
+                <form id="b2bForm" class="space-y-5" novalidate>
+                    <div>
+                        <label class="form-label">
+                            <span class="lang-content active" data-lang="th">ชื่อผู้ติดต่อ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ຊື່ຜູ້ຕິດຕໍ່ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Contact Name <span class="text-red-500">*</span></span>
+                        </label>
+                        <input type="text" id="contactName" required class="form-input" placeholder="ชื่อ-นามสกุลผู้ติดต่อ" />
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <span class="lang-content active" data-lang="th">ชื่อสถานประกอบการ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ຊື່ສະຖານປະກອບການ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Organization Name <span class="text-red-500">*</span></span>
+                        </label>
+                        <input type="text" id="companyName" required class="form-input" placeholder="เช่น Vientiane Wellness Clinic" />
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <span class="lang-content active" data-lang="th">เบอร์โทรติดต่อ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ເບີໂທຕິດຕໍ່ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Phone Number <span class="text-red-500">*</span></span>
+                        </label>
+                        <input type="tel" id="partnerPhone" required class="form-input" placeholder="+856 20 XXXXXXXX" />
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <span class="lang-content active" data-lang="th">ประเภทธุรกิจ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ປະເພດທຸລະກິດ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Business Type <span class="text-red-500">*</span></span>
+                        </label>
+                        <select id="partnerType" class="form-input bg-white">
+                            <option value="clinic_hospital">คลินิก / โรงพยาบาล</option>
+                            <option value="hotel_resort">โรงแรม / ที่พัก</option>
+                            <option value="transport_agent">ผู้ให้บริการเดินทาง / รถรับส่ง</option>
+                            <option value="investor">นักลงทุน / ผู้สนใจร่วมธุรกิจ</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <span class="lang-content active" data-lang="th">ข้อมูลเพิ่มเติม</span>
+                            <span class="lang-content" data-lang="lo">ຂໍ້ມູນເພີ່ມເຕີມ</span>
+                            <span class="lang-content" data-lang="en">Additional Information</span>
+                        </label>
+                        <textarea id="partnerMessage" rows="3" class="form-input" placeholder="จำนวนเคสต่อเดือน, จำนวนห้องพัก, ความต้องการพิเศษ..."></textarea>
+                    </div>
+
+                    <button type="submit" id="b2bSubmitBtn" class="btn-primary w-full justify-center text-base">
+                        <span id="b2bBtnText">
+                            <span class="lang-content active" data-lang="th">ส่งข้อมูลสมัครพันธมิตร</span>
+                            <span class="lang-content" data-lang="lo">ສົ່ງຂໍ້ມູນສະໝັກຄູ່ຮ່ວມງານ</span>
+                            <span class="lang-content" data-lang="en">Submit Partner Application</span>
+                        </span>
+                        <span id="b2bLoading" class="hidden">⏳ กำลังบันทึก...</span>
+                    </button>
+
+                    <div id="b2bStatus" class="text-center text-sm font-medium hidden"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-white font-bold text-lg mb-2">WOS<span class="text-amber-500 font-light">.os</span></div>
+                    <p class="text-xs text-slate-500">Healthcare Hospitality OS</p>
+                    <div class="mt-3 flex gap-3">
+                        <a href="https://wa.me/message/BVJXBWDYR2UHN1" target="_blank" rel="noopener" class="text-slate-500 hover:text-white transition"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://line.me/ti/p/@vlf9996z" target="_blank" rel="noopener" class="text-slate-500 hover:text-white transition"><i class="fab fa-line"></i></a>
+                        <a href="#" class="text-slate-500 hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">บริการ</span>
+                        <span class="lang-content" data-lang="lo">ບໍລິການ</span>
+                        <span class="lang-content" data-lang="en">Services</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="services.html" class="hover:text-white transition">Consult</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Checkup</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Aesthetics</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Dental</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">พันธมิตร</span>
+                        <span class="lang-content" data-lang="lo">ຄູ່ຮ່ວມງານ</span>
+                        <span class="lang-content" data-lang="en">Partners</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="partner.html" class="hover:text-white transition">Join Network</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Investor</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Hospital</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Hotel</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">ติดต่อ</span>
+                        <span class="lang-content" data-lang="lo">ຕິດຕໍ່</span>
+                        <span class="lang-content" data-lang="en">Contact</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="tel:+66855907666" class="hover:text-white">โทร (ไทย): 085-590-7666</a></li>
+                        <li><a href="tel:+8562098724718" class="hover:text-white">โทร (ลาว): +856 20 9872 4718</a></li>
+                        <li><a href="https://line.me/ti/p/@vlf9996z" target="_blank" rel="noopener" class="hover:text-white">LINE OA: @vlf9996z</a></li>
+                        <li><a href="https://wa.me/message/BVJXBWDYR2UHN1" target="_blank" rel="noopener" class="hover:text-white">WhatsApp</a></li>
+                        <li><a href="mailto:hello@wos.asia" class="hover:text-white">hello@wos.asia</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-900 mt-8 pt-6 text-xs text-slate-500 text-center">
+                <p>&#3627;&#3592;&#3585;. &#3619;&#3629;&#3618;&#3633;&#3621; &#3610;&#3619;&#3636;&#3605;&#3592;&#3660; 99 &middot; &#3648;&#3621;&#3586;&#3607;&#3637; 211 &#3627;&#3617;&#3641;&#3656; 3 &#3606;.&#3617;&#3636;&#3605;&#3619;&#3616;&#3634;&#3614; &#3605;.&#3610;&#3657;&#3634;&#3609;&#3592;&#3633;&#3656;&#3609; &#3629;.&#3648;&#3617;&#3639;&#3629;&#3591; &#3629;&#3640;&#3604;&#3619;&#3608;&#3634;&#3609;&#3637; 41000 &middot; &#3607;&#3632;&#3648;&#3610;&#3637;&#3618;&#3609;&#3609;&#3636;&#3605;&#3636;&#3610;&#3640;&#3588;&#3588;&#3621;: 0413568000586</p>
+                <p class="mt-2">&copy; 2026 WOS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            const supabase = window.__supabase;
+            if (!supabase) {
+                console.warn('⚠️ Supabase client not available');
+            }
+
+            const form = document.getElementById('b2bForm');
+            const submitBtn = document.getElementById('b2bSubmitBtn');
+            const btnText = document.getElementById('b2bBtnText');
+            const loading = document.getElementById('b2bLoading');
+            const status = document.getElementById('b2bStatus');
+
+            function showStatus(message, type) {
+                status.textContent = message;
+                status.className = 'text-center text-sm font-medium mt-4 p-3 rounded-xl ' +
+                    (type === 'success' ? 'text-emerald-700 bg-emerald-50' :
+                     type === 'error' ? 'text-red-700 bg-red-50' :
+                     'text-amber-700 bg-amber-50');
+                status.classList.remove('hidden');
+            }
+
+            function clearErrors() {
+                document.querySelectorAll('.form-input.error').forEach(el => el.classList.remove('error'));
+            }
+
+            function validateFields() {
+                let isValid = true;
+                const fields = ['contactName', 'companyName', 'partnerPhone'];
+                fields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el.value.trim()) {
+                        el.classList.add('error');
+                        isValid = false;
+                    } else {
+                        el.classList.remove('error');
+                    }
+                });
+                return isValid;
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                clearErrors();
+
+                if (!validateFields()) {
+                    showStatus('⚠️ กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                btnText.classList.add('hidden');
+                loading.classList.remove('hidden');
+                status.classList.add('hidden');
+
+                const contactName = document.getElementById('contactName').value.trim();
+                const companyName = document.getElementById('companyName').value.trim();
+                const phone = document.getElementById('partnerPhone').value.trim();
+                const partnerType = document.getElementById('partnerType').value;
+                const message = document.getElementById('partnerMessage').value.trim() || null;
+
+                const payload = {
+                    patient_name: `${contactName} (${companyName})`,
+                    phone_number: phone,
+                    service_type: `[B2B] ${partnerType}`,
+                    hospital: companyName,
+                    travel_date: null,
+                    message: message,
+                    status: 'new_lead_b2b',
+                    created_at: new Date().toISOString()
+                };
+
+                try {
+                    if (!supabase) throw new Error('Supabase not connected');
+                    const { error } = await supabase.from('cases').insert([payload]);
+                    if (error) throw new Error(error.message);
+
+                    showStatus('✅ ส่งข้อมูลสำเร็จ! ทีมงาน WOS จะติดต่อกลับโดยเร็วที่สุด', 'success');
+                    form.reset();
+                    clearErrors();
+                } catch (err) {
+                    showStatus('❌ ' + err.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    loading.classList.add('hidden');
+                }
+            });
+
+            // Auto-init language switcher
+            if (typeof window.initLanguageSwitcher === 'function') {
+                window.initLanguageSwitcher();
+            }
+        })();
+    </script>
+</body>
+</html>

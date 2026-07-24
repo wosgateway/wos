@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="robots" content="noindex, nofollow" />
+    <title>WOS Concierge — Admin: พาร์ทเนอร์ & แพ็กเกจ</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .status-badge { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .65rem; border-radius:999px; font-size:.75rem; font-weight:600; }
+        .admin-row:hover { background:#f8fafc; }
+        .admin-tab { padding:.5rem 1.1rem; border-radius:999px; font-size:.85rem; font-weight:600; color:#64748b; cursor:pointer; }
+        .admin-tab.active { background:#0f172a; color:#fff; }
+        .modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,.5); display:flex; align-items:flex-start; justify-content:center; padding:2rem 1rem; overflow-y:auto; z-index:100; }
+        .modal-card { background:#fff; border-radius:1.25rem; width:100%; max-width:640px; padding:1.75rem; }
+        .thumb-64 { width:48px; height:48px; border-radius:.6rem; object-fit:cover; background:#f1f5f9; }
+        .icon-btn { padding:.35rem .6rem; border-radius:.5rem; font-size:.8rem; font-weight:600; }
+        .icon-btn.edit { color:#0f172a; background:#f1f5f9; }
+        .icon-btn.edit:hover { background:#e2e8f0; }
+        .icon-btn.del { color:#991b1b; background:#fee2e2; }
+        .icon-btn.del:hover { background:#fecaca; }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- ===== PASSWORD GATE (shared session with admin.html) ===== -->
+    <div id="gateScreen" class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-8 w-full max-w-sm">
+            <div class="text-center mb-6">
+                <div class="text-3xl font-bold text-primary">WOS<span class="text-amber-500 font-light text-lg align-top">.os</span></div>
+                <p class="text-slate-500 text-sm mt-1">Admin — พาร์ทเนอร์ & แพ็กเกจ</p>
+            </div>
+            <label class="form-label">รหัสผ่านทีมงาน</label>
+            <input type="password" id="gatePassword" class="form-input" placeholder="••••••••" autocomplete="off" />
+            <p id="gateError" class="text-red-600 text-sm mt-2 hidden">รหัสผ่านไม่ถูกต้อง</p>
+            <button id="gateSubmit" class="btn-primary w-full justify-center mt-4">เข้าสู่ระบบ</button>
+            <p class="text-xs text-slate-400 mt-4 leading-relaxed">
+                ⚠️ หน้านี้ป้องกันด้วยรหัสผ่านฝั่งเบราว์เซอร์เท่านั้น ไม่ใช่การยืนยันตัวตนระดับฐานข้อมูล
+                ห้ามแชร์ลิงก์หรือรหัสผ่านนี้ให้บุคคลภายนอก
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN DASHBOARD ===== -->
+    <div id="dashboard" class="hidden">
+        <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+                <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                    WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+                    <span class="text-xs font-semibold text-slate-400 ml-2 border-l border-slate-200 pl-2">Admin</span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="admin.html" class="text-sm font-medium text-slate-500 hover:text-primary transition">รายการจอง</a>
+                    <button id="logoutBtn" class="text-sm font-medium text-slate-500 hover:text-red-600 transition">ออกจากระบบ</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+            <!-- Tabs -->
+            <div class="flex items-center gap-2 mb-6">
+                <div id="tabPartners" class="admin-tab active" data-tab="partners">พาร์ทเนอร์</div>
+                <div id="tabPackages" class="admin-tab" data-tab="packages">แพ็กเกจ</div>
+            </div>
+
+            <!-- ============ PARTNERS PANEL ============ -->
+            <div id="panelPartners">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">พาร์ทเนอร์</h1>
+                        <p id="partnersCount" class="text-slate-500 text-sm mt-0.5"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="refreshPartnersBtn" class="btn-outline-primary">🔄 รีเฟรช</button>
+                        <button id="addPartnerBtn" class="btn-primary">+ เพิ่มพาร์ทเนอร์</button>
+                    </div>
+                </div>
+
+                <div id="partnersLoading" class="space-y-3">
+                    <div class="skeleton h-16"></div>
+                    <div class="skeleton h-16"></div>
+                    <div class="skeleton h-16"></div>
+                </div>
+                <div id="partnersEmpty" class="empty-state hidden">
+                    <div class="icon">🏥</div>
+                    <p>ยังไม่มีพาร์ทเนอร์ — กด "เพิ่มพาร์ทเนอร์" เพื่อเริ่มต้น</p>
+                </div>
+                <div id="partnersError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
+
+                <div id="partnersTableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
+                    <table class="w-full text-sm min-w-[800px]">
+                        <thead>
+                            <tr class="text-left text-slate-500 border-b border-slate-100">
+                                <th class="py-3 px-4 font-semibold">รูป</th>
+                                <th class="py-3 px-4 font-semibold">ชื่อ</th>
+                                <th class="py-3 px-4 font-semibold">หมวดหมู่</th>
+                                <th class="py-3 px-4 font-semibold">จังหวัด</th>
+                                <th class="py-3 px-4 font-semibold">คะแนน</th>
+                                <th class="py-3 px-4 font-semibold">สถานะ</th>
+                                <th class="py-3 px-4 font-semibold text-right">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partnersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ============ PACKAGES PANEL ============ -->
+            <div id="panelPackages" class="hidden">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">แพ็กเกจ / โปรแกรม</h1>
+                        <p id="packagesCount" class="text-slate-500 text-sm mt-0.5"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="refreshPackagesBtn" class="btn-outline-primary">🔄 รีเฟรช</button>
+                        <button id="addPackageBtn" class="btn-primary">+ เพิ่มแพ็กเกจ</button>
+                    </div>
+                </div>
+
+                <div id="packagesLoading" class="space-y-3">
+                    <div class="skeleton h-16"></div>
+                    <div class="skeleton h-16"></div>
+                    <div class="skeleton h-16"></div>
+                </div>
+                <div id="packagesEmpty" class="empty-state hidden">
+                    <div class="icon">📋</div>
+                    <p>ยังไม่มีแพ็กเกจ — กด "เพิ่มแพ็กเกจ" เพื่อเริ่มต้น</p>
+                </div>
+                <div id="packagesError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
+
+                <div id="packagesTableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
+                    <table class="w-full text-sm min-w-[900px]">
+                        <thead>
+                            <tr class="text-left text-slate-500 border-b border-slate-100">
+                                <th class="py-3 px-4 font-semibold">รูป</th>
+                                <th class="py-3 px-4 font-semibold">โปรแกรม</th>
+                                <th class="py-3 px-4 font-semibold">พาร์ทเนอร์</th>
+                                <th class="py-3 px-4 font-semibold">ราคา</th>
+                                <th class="py-3 px-4 font-semibold">ระยะเวลา</th>
+                                <th class="py-3 px-4 font-semibold">โปรโมชัน</th>
+                                <th class="py-3 px-4 font-semibold text-right">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="packagesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PARTNER MODAL ===== -->
+    <div id="partnerModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="flex items-center justify-between mb-5">
+                <h2 id="partnerModalTitle" class="text-lg font-bold text-slate-900">เพิ่มพาร์ทเนอร์</h2>
+                <button class="text-slate-400 hover:text-slate-700 text-xl leading-none" onclick="closePartnerModal()">✕</button>
+            </div>
+            <form id="partnerForm" class="space-y-4">
+                <input type="hidden" id="p_id" />
+                <div>
+                    <label class="form-label">ชื่อพาร์ทเนอร์ *</label>
+                    <input type="text" id="p_name" class="form-input" required />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">หมวดหมู่ *</label>
+                        <select id="p_category" class="form-input" required></select>
+                    </div>
+                    <div>
+                        <label class="form-label">จังหวัด</label>
+                        <input type="text" id="p_province" class="form-input" placeholder="เช่น อุดรธานี" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">คะแนน (0–5)</label>
+                        <input type="number" id="p_rating" class="form-input" step="0.1" min="0" max="5" />
+                    </div>
+                    <div>
+                        <label class="form-label">สถานะ *</label>
+                        <select id="p_status" class="form-input" required>
+                            <option value="active">แสดงบนเว็บไซต์ (active)</option>
+                            <option value="inactive">ซ่อนชั่วคราว (inactive)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">คำอธิบาย</label>
+                    <textarea id="p_description" class="form-input" rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="form-label">รูปหน้าปก</label>
+                    <div class="flex items-center gap-3">
+                        <img id="p_cover_preview" src="" class="thumb-64 hidden" alt="" />
+                        <input type="file" id="p_cover_file" accept="image/*" class="form-input" />
+                    </div>
+                    <input type="hidden" id="p_cover" />
+                    <p id="p_cover_status" class="text-xs text-slate-400 mt-1"></p>
+                </div>
+                <div>
+                    <label class="form-label">รูปแกลเลอรี (เลือกได้หลายรูปพร้อมกัน)</label>
+                    <input type="file" id="p_gallery_files" accept="image/*" multiple class="form-input" />
+                    <div id="p_gallery_preview" class="grid grid-cols-6 gap-2 mt-2"></div>
+                    <p id="p_gallery_status" class="text-xs text-slate-400 mt-1"></p>
+                </div>
+                <div id="partnerPackagesSection" class="hidden border-t border-slate-100 pt-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label !mb-0">โปรแกรม/แพ็กเกจของพาร์ทเนอร์นี้</label>
+                        <button type="button" id="addPackageFromPartnerBtn" class="text-xs font-semibold text-primary hover:underline">+ เพิ่มแพ็กเกจ</button>
+                    </div>
+                    <div id="partnerPackagesList" class="space-y-2"></div>
+                </div>
+                <p id="partnerFormError" class="text-red-600 text-sm hidden"></p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" class="btn-outline-primary" onclick="closePartnerModal()">ยกเลิก</button>
+                    <button type="submit" id="partnerSaveBtn" class="btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== PACKAGE MODAL ===== -->
+    <div id="packageModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="flex items-center justify-between mb-5">
+                <h2 id="packageModalTitle" class="text-lg font-bold text-slate-900">เพิ่มแพ็กเกจ</h2>
+                <button class="text-slate-400 hover:text-slate-700 text-xl leading-none" onclick="closePackageModal()">✕</button>
+            </div>
+            <form id="packageForm" class="space-y-4">
+                <input type="hidden" id="pk_id" />
+                <div>
+                    <label class="form-label">พาร์ทเนอร์ *</label>
+                    <select id="pk_partner" class="form-input" required></select>
+                </div>
+                <div>
+                    <label class="form-label">ชื่อโปรแกรม *</label>
+                    <input type="text" id="pk_title" class="form-input" required />
+                </div>
+                <div>
+                    <label class="form-label">คำอธิบาย</label>
+                    <textarea id="pk_description" class="form-input" rows="2"></textarea>
+                </div>
+                <div>
+                    <label class="form-label">รูปประกอบโปรแกรม</label>
+                    <div class="flex items-center gap-3">
+                        <img id="pk_image_preview" src="" class="thumb-64 hidden" alt="" />
+                        <input type="file" id="pk_image_file" accept="image/*" class="form-input" />
+                    </div>
+                    <input type="hidden" id="pk_image" />
+                    <p id="pk_image_status" class="text-xs text-slate-400 mt-1"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">ราคาปกติ (บาท) *</label>
+                        <input type="number" id="pk_original_price" class="form-input" required min="0" />
+                    </div>
+                    <div>
+                        <label class="form-label">ราคาพิเศษ (บาท)</label>
+                        <input type="number" id="pk_special_price" class="form-input" min="0" placeholder="เว้นว่างถ้าไม่มีส่วนลด" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 items-end">
+                    <div>
+                        <label class="form-label">ระยะเวลา</label>
+                        <input type="text" id="pk_duration" class="form-input" placeholder="เช่น 90 นาที" />
+                    </div>
+                    <label class="flex items-center gap-2 mb-2.5">
+                        <input type="checkbox" id="pk_is_promotion" class="w-4 h-4" />
+                        <span class="text-sm font-medium text-slate-700">เป็นโปรโมชันพิเศษ 🔥</span>
+                    </label>
+                </div>
+                <p id="packageFormError" class="text-red-600 text-sm hidden"></p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" class="btn-outline-primary" onclick="closePackageModal()">ยกเลิก</button>
+                    <button type="submit" id="packageSaveBtn" class="btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // Same password + session key as admin.html so a login on either page unlocks both.
+        const ADMIN_PASSWORD = 'Boy2517';
+        const SESSION_KEY = 'wos-admin-unlocked';
+
+        const gateScreen = document.getElementById('gateScreen');
+        const dashboard = document.getElementById('dashboard');
+        const gatePassword = document.getElementById('gatePassword');
+        const gateError = document.getElementById('gateError');
+
+        function unlock() {
+            gateScreen.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            init();
+        }
+
+        document.getElementById('gateSubmit').addEventListener('click', tryUnlock);
+        gatePassword.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryUnlock(); });
+
+        function tryUnlock() {
+            if (gatePassword.value === ADMIN_PASSWORD) {
+                try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) {}
+                unlock();
+            } else {
+                gateError.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+            location.reload();
+        });
+
+        try {
+            if (sessionStorage.getItem(SESSION_KEY) === '1') unlock();
+        } catch (e) {}
+
+        // ============================================================
+        // SHARED
+        // ============================================================
+        const supabase = window.__supabase;
+        let allPartners = [];
+        let allPackages = [];
+        let currentGalleryUrls = []; // gallery URLs staged for the partner currently being edited
+
+        // Uploads a file to the 'partner-images' Storage bucket and returns its public URL.
+        // Requires a public bucket named 'partner-images' to exist in the Supabase project.
+        async function uploadPartnerImage(file) {
+            if (!supabase) throw new Error('Supabase client is not initialized');
+            const path = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+            const { error: uploadError } = await supabase.storage.from('partner-images').upload(path, file);
+            if (uploadError) throw uploadError;
+            const { data } = supabase.storage.from('partner-images').getPublicUrl(path);
+            return data.publicUrl;
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+        }
+        function fmtTHB(n) {
+            if (n === null || n === undefined || n === '') return '-';
+            return (window.formatTHB ? window.formatTHB(n) : `฿${Number(n).toLocaleString('th-TH')}`);
+        }
+
+        function init() {
+            populateCategorySelect();
+            loadPartners();
+            loadPackages();
+        }
+
+        // Tabs
+        document.getElementById('tabPartners').addEventListener('click', () => switchTab('partners'));
+        document.getElementById('tabPackages').addEventListener('click', () => switchTab('packages'));
+        function switchTab(tab) {
+            document.getElementById('tabPartners').classList.toggle('active', tab === 'partners');
+            document.getElementById('tabPackages').classList.toggle('active', tab === 'packages');
+            document.getElementById('panelPartners').classList.toggle('hidden', tab !== 'partners');
+            document.getElementById('panelPackages').classList.toggle('hidden', tab !== 'packages');
+        }
+
+        function populateCategorySelect() {
+            const sel = document.getElementById('p_category');
+            const cats = window.WOS_CATEGORIES || [];
+            // Flatten to individual DB category values (e.g. hotel_transport card covers
+            // both 'Hotel' and 'Transport' as separate DB values, so list each on its own).
+            const options = [];
+            cats.forEach(c => {
+                (c.dbCategories || []).forEach(dbVal => {
+                    options.push({ dbVal, label: c.label.th + (c.dbCategories.length > 1 ? ` — ${dbVal}` : '') });
+                });
+            });
+            sel.innerHTML = options.map(o => `<option value="${escapeHtml(o.dbVal)}">${escapeHtml(o.label)}</option>`).join('');
+        }
+
+        // ============================================================
+        // PARTNERS
+        // ============================================================
+        const partnersLoading = document.getElementById('partnersLoading');
+        const partnersEmpty = document.getElementById('partnersEmpty');
+        const partnersError = document.getElementById('partnersError');
+        const partnersTableWrap = document.getElementById('partnersTableWrap');
+        const partnersBody = document.getElementById('partnersBody');
+        const partnersCount = document.getElementById('partnersCount');
+
+        document.getElementById('refreshPartnersBtn').addEventListener('click', loadPartners);
+        document.getElementById('addPartnerBtn').addEventListener('click', () => openPartnerModal());
+
+        async function loadPartners() {
+            if (!supabase) { showPartnersError('ไม่สามารถเชื่อมต่อ Supabase ได้ (ตรวจสอบว่าโหลด js/main.js สำเร็จ)'); return; }
+            partnersLoading.classList.remove('hidden');
+            partnersTableWrap.classList.add('hidden');
+            partnersEmpty.classList.add('hidden');
+            partnersError.classList.add('hidden');
+
+            const { data, error } = await supabase
+                .from('partners')
+                .select('id, name, category, province, rating, status, description, cover_image_url, gallery_urls')
+                .order('name', { ascending: true });
+
+            partnersLoading.classList.add('hidden');
+            if (error) { showPartnersError('โหลดข้อมูลไม่สำเร็จ: ' + error.message); return; }
+
+            allPartners = data || [];
+            renderPartners();
+            populatePartnerSelect();
+        }
+
+        function showPartnersError(msg) {
+            partnersError.textContent = '⚠️ ' + msg;
+            partnersError.classList.remove('hidden');
+        }
+
+        function renderPartners() {
+            partnersCount.textContent = `ทั้งหมด ${allPartners.length} พาร์ทเนอร์`;
+            if (allPartners.length === 0) {
+                partnersTableWrap.classList.add('hidden');
+                partnersEmpty.classList.remove('hidden');
+                return;
+            }
+            partnersEmpty.classList.add('hidden');
+            partnersTableWrap.classList.remove('hidden');
+            partnersBody.innerHTML = allPartners.map(p => `
+                <tr class="admin-row border-b border-slate-50 align-top">
+                    <td class="py-3 px-4"><img class="thumb-64" src="${escapeHtml(p.cover_image_url || 'images/hero/hero-main.webp')}" alt="" /></td>
+                    <td class="py-3 px-4 font-medium text-slate-800">${escapeHtml(p.name)}</td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(p.category || '-')}</td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(p.province || '-')}</td>
+                    <td class="py-3 px-4 text-slate-600">⭐ ${p.rating ?? '-'}</td>
+                    <td class="py-3 px-4">
+                        ${p.status === 'active'
+                            ? '<span class="status-badge" style="background:#d1fae5;color:#065f46;">แสดงอยู่</span>'
+                            : '<span class="status-badge" style="background:#fee2e2;color:#991b1b;">ซ่อนอยู่</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <button class="icon-btn edit" data-id="${escapeHtml(p.id)}" data-action="edit-partner">แก้ไข</button>
+                        <button class="icon-btn del" data-id="${escapeHtml(p.id)}" data-action="del-partner">ลบ</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            partnersBody.querySelectorAll('[data-action="edit-partner"]').forEach(btn =>
+                btn.addEventListener('click', () => openPartnerModal(btn.dataset.id)));
+            partnersBody.querySelectorAll('[data-action="del-partner"]').forEach(btn =>
+                btn.addEventListener('click', () => deletePartner(btn.dataset.id)));
+        }
+
+        // ---- Partner modal ----
+        const partnerModal = document.getElementById('partnerModal');
+        const partnerForm = document.getElementById('partnerForm');
+        const partnerFormError = document.getElementById('partnerFormError');
+
+        function openPartnerModal(id) {
+            partnerForm.reset();
+            partnerFormError.classList.add('hidden');
+            document.getElementById('p_id').value = '';
+            document.getElementById('p_status').value = 'active';
+            document.getElementById('p_cover').value = '';
+            document.getElementById('p_cover_status').textContent = '';
+            document.getElementById('p_gallery_status').textContent = '';
+            const coverPreview = document.getElementById('p_cover_preview');
+            coverPreview.src = '';
+            coverPreview.classList.add('hidden');
+            currentGalleryUrls = [];
+
+            if (id) {
+                const p = allPartners.find(x => String(x.id) === String(id));
+                if (!p) return;
+                document.getElementById('partnerModalTitle').textContent = 'แก้ไขพาร์ทเนอร์';
+                document.getElementById('p_id').value = p.id;
+                document.getElementById('p_name').value = p.name || '';
+                document.getElementById('p_category').value = p.category || '';
+                document.getElementById('p_province').value = p.province || '';
+                document.getElementById('p_rating').value = p.rating ?? '';
+                document.getElementById('p_status').value = p.status || 'active';
+                document.getElementById('p_description').value = p.description || '';
+                document.getElementById('p_cover').value = p.cover_image_url || '';
+                if (p.cover_image_url) {
+                    coverPreview.src = p.cover_image_url;
+                    coverPreview.classList.remove('hidden');
+                }
+                currentGalleryUrls = (p.gallery_urls || []).slice();
+                renderGalleryPreview();
+                renderPartnerPackagesInModal(p.id);
+            } else {
+                document.getElementById('partnerModalTitle').textContent = 'เพิ่มพาร์ทเนอร์';
+                renderGalleryPreview();
+                document.getElementById('partnerPackagesSection').classList.add('hidden');
+            }
+            partnerModal.classList.remove('hidden');
+        }
+        window.closePartnerModal = function() { partnerModal.classList.add('hidden'); };
+
+        // ---- Cover image upload ----
+        document.getElementById('p_cover_file').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('p_cover_status');
+            statusEl.textContent = 'กำลังอัปโหลด...';
+            try {
+                const url = await uploadPartnerImage(file);
+                document.getElementById('p_cover').value = url;
+                const preview = document.getElementById('p_cover_preview');
+                preview.src = url;
+                preview.classList.remove('hidden');
+                statusEl.textContent = 'อัปโหลดสำเร็จ ✓';
+            } catch (err) {
+                statusEl.textContent = '⚠️ อัปโหลดไม่สำเร็จ: ' + err.message;
+            }
+        });
+
+        // ---- Gallery images upload (multiple) ----
+        document.getElementById('p_gallery_files').addEventListener('change', async function() {
+            const files = Array.from(this.files || []);
+            if (files.length === 0) return;
+            const statusEl = document.getElementById('p_gallery_status');
+            statusEl.textContent = `กำลังอัปโหลด ${files.length} รูป...`;
+            let failCount = 0;
+            for (const file of files) {
+                try {
+                    const url = await uploadPartnerImage(file);
+                    currentGalleryUrls.push(url);
+                    renderGalleryPreview();
+                } catch (err) {
+                    failCount++;
+                }
+            }
+            statusEl.textContent = failCount > 0
+                ? `อัปโหลดสำเร็จบางส่วน (ล้มเหลว ${failCount} รูป)`
+                : `อัปโหลดสำเร็จ ${files.length} รูป ✓`;
+            this.value = '';
+        });
+
+        function renderGalleryPreview() {
+            const wrap = document.getElementById('p_gallery_preview');
+            wrap.innerHTML = currentGalleryUrls.map((url, i) => `
+                <div class="relative">
+                    <img src="${escapeHtml(url)}" class="w-full h-14 object-cover rounded-lg" alt="" />
+                    <button type="button" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white rounded-full w-5 h-5 text-xs leading-none" data-idx="${i}" data-action="remove-gallery-img">✕</button>
+                </div>
+            `).join('');
+            wrap.querySelectorAll('[data-action="remove-gallery-img"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentGalleryUrls.splice(Number(btn.dataset.idx), 1);
+                    renderGalleryPreview();
+                });
+            });
+        }
+
+        // ---- Packages inline inside the partner modal ----
+        function renderPartnerPackagesInModal(partnerId) {
+            const section = document.getElementById('partnerPackagesSection');
+            const list = document.getElementById('partnerPackagesList');
+            if (!partnerId) { section.classList.add('hidden'); return; }
+            section.classList.remove('hidden');
+            const pkgs = allPackages.filter(pk => String(pk.partner_id) === String(partnerId));
+            if (pkgs.length === 0) {
+                list.innerHTML = `<p class="text-slate-400 text-xs">ยังไม่มีแพ็กเกจสำหรับพาร์ทเนอร์นี้</p>`;
+                return;
+            }
+            list.innerHTML = pkgs.map(pk => `
+                <div class="flex items-center justify-between bg-slate-50 rounded-lg px-3 py-2">
+                    <div class="flex items-center gap-3">
+                        <img src="${escapeHtml(pk.image_url || 'images/hero/hero-main.webp')}" class="w-10 h-10 rounded-md object-cover" alt="" />
+                        <div>
+                            <div class="font-medium text-slate-800 text-sm">${escapeHtml(pk.title)}</div>
+                            <div class="text-xs text-slate-500">${fmtTHB(pk.special_price || pk.original_price)}${pk.is_promotion ? ' · 🔥 โปรโมชัน' : ''}</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button type="button" class="icon-btn edit" data-id="${escapeHtml(pk.id)}" data-action="edit-package-inline">แก้ไข</button>
+                        <button type="button" class="icon-btn del" data-id="${escapeHtml(pk.id)}" data-action="del-package-inline">ลบ</button>
+                    </div>
+                </div>
+            `).join('');
+            list.querySelectorAll('[data-action="edit-package-inline"]').forEach(btn =>
+                btn.addEventListener('click', () => openPackageModal(btn.dataset.id)));
+            list.querySelectorAll('[data-action="del-package-inline"]').forEach(btn =>
+                btn.addEventListener('click', async () => {
+                    await deletePackage(btn.dataset.id);
+                    renderPartnerPackagesInModal(partnerId);
+                }));
+        }
+
+        document.getElementById('addPackageFromPartnerBtn').addEventListener('click', () => {
+            openPackageModal(null, document.getElementById('p_id').value);
+        });
+
+        partnerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            partnerFormError.classList.add('hidden');
+
+            const id = document.getElementById('p_id').value;
+            const payload = {
+                name: document.getElementById('p_name').value.trim(),
+                category: document.getElementById('p_category').value,
+                province: document.getElementById('p_province').value.trim() || null,
+                rating: document.getElementById('p_rating').value ? Number(document.getElementById('p_rating').value) : null,
+                status: document.getElementById('p_status').value,
+                description: document.getElementById('p_description').value.trim() || null,
+                cover_image_url: document.getElementById('p_cover').value.trim() || null,
+                gallery_urls: currentGalleryUrls.slice()
+            };
+
+            if (!payload.name) { showPartnerFormError('กรุณากรอกชื่อพาร์ทเนอร์'); return; }
+
+            const saveBtn = document.getElementById('partnerSaveBtn');
+            saveBtn.disabled = true; saveBtn.textContent = 'กำลังบันทึก...';
+
+            let error;
+            if (id) {
+                ({ error } = await supabase.from('partners').update(payload).eq('id', id));
+            } else {
+                ({ error } = await supabase.from('partners').insert(payload));
+            }
+
+            saveBtn.disabled = false; saveBtn.textContent = 'บันทึก';
+
+            if (error) { showPartnerFormError('บันทึกไม่สำเร็จ: ' + error.message); return; }
+            closePartnerModal();
+            loadPartners();
+        });
+
+        function showPartnerFormError(msg) {
+            partnerFormError.textContent = '⚠️ ' + msg;
+            partnerFormError.classList.remove('hidden');
+        }
+
+        async function deletePartner(id) {
+            const p = allPartners.find(x => String(x.id) === String(id));
+            const name = p ? p.name : id;
+            if (!confirm(`ลบ "${name}" ออกจากระบบ? การลบพาร์ทเนอร์อาจกระทบแพ็กเกจที่ผูกอยู่กับพาร์ทเนอร์นี้`)) return;
+
+            const { error } = await supabase.from('partners').delete().eq('id', id);
+            if (error) { alert('ลบไม่สำเร็จ: ' + error.message); return; }
+            loadPartners();
+        }
+
+        // ============================================================
+        // PACKAGES
+        // ============================================================
+        const packagesLoading = document.getElementById('packagesLoading');
+        const packagesEmpty = document.getElementById('packagesEmpty');
+        const packagesError = document.getElementById('packagesError');
+        const packagesTableWrap = document.getElementById('packagesTableWrap');
+        const packagesBody = document.getElementById('packagesBody');
+        const packagesCount = document.getElementById('packagesCount');
+
+        document.getElementById('refreshPackagesBtn').addEventListener('click', loadPackages);
+        document.getElementById('addPackageBtn').addEventListener('click', () => openPackageModal());
+
+        async function loadPackages() {
+            if (!supabase) { showPackagesError('ไม่สามารถเชื่อมต่อ Supabase ได้'); return; }
+            packagesLoading.classList.remove('hidden');
+            packagesTableWrap.classList.add('hidden');
+            packagesEmpty.classList.add('hidden');
+            packagesError.classList.add('hidden');
+
+            const { data, error } = await supabase
+                .from('packages')
+                .select('id, title, description, image_url, original_price, special_price, duration, is_promotion, partner_id, partners ( name )')
+                .order('title', { ascending: true });
+
+            packagesLoading.classList.add('hidden');
+            if (error) { showPackagesError('โหลดข้อมูลไม่สำเร็จ: ' + error.message); return; }
+
+            allPackages = data || [];
+            renderPackages();
+        }
+
+        function showPackagesError(msg) {
+            packagesError.textContent = '⚠️ ' + msg;
+            packagesError.classList.remove('hidden');
+        }
+
+        function renderPackages() {
+            packagesCount.textContent = `ทั้งหมด ${allPackages.length} แพ็กเกจ`;
+            if (allPackages.length === 0) {
+                packagesTableWrap.classList.add('hidden');
+                packagesEmpty.classList.remove('hidden');
+                return;
+            }
+            packagesEmpty.classList.add('hidden');
+            packagesTableWrap.classList.remove('hidden');
+            packagesBody.innerHTML = allPackages.map(pk => `
+                <tr class="admin-row border-b border-slate-50 align-top">
+                    <td class="py-3 px-4"><img class="thumb-64" src="${escapeHtml(pk.image_url || 'images/hero/hero-main.webp')}" alt="" /></td>
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-slate-800">${escapeHtml(pk.title)}</div>
+                        <div class="text-slate-500 text-xs line-clamp-1">${escapeHtml(pk.description || '')}</div>
+                    </td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(pk.partners ? pk.partners.name : '-')}</td>
+                    <td class="py-3 px-4 text-slate-600">
+                        ${pk.special_price ? `<span class="line-through text-slate-400 text-xs mr-1">${fmtTHB(pk.original_price)}</span>` : ''}
+                        <span class="font-semibold">${fmtTHB(pk.special_price || pk.original_price)}</span>
+                    </td>
+                    <td class="py-3 px-4 text-slate-600 text-xs">${escapeHtml(pk.duration || '-')}</td>
+                    <td class="py-3 px-4">${pk.is_promotion ? '<span class="promo-badge">🔥 โปรโมชัน</span>' : '-'}</td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <button class="icon-btn edit" data-id="${escapeHtml(pk.id)}" data-action="edit-package">แก้ไข</button>
+                        <button class="icon-btn del" data-id="${escapeHtml(pk.id)}" data-action="del-package">ลบ</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            packagesBody.querySelectorAll('[data-action="edit-package"]').forEach(btn =>
+                btn.addEventListener('click', () => openPackageModal(btn.dataset.id)));
+            packagesBody.querySelectorAll('[data-action="del-package"]').forEach(btn =>
+                btn.addEventListener('click', () => deletePackage(btn.dataset.id)));
+        }
+
+        function populatePartnerSelect() {
+            const sel = document.getElementById('pk_partner');
+            sel.innerHTML = allPartners.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join('');
+        }
+
+        // ---- Package modal ----
+        const packageModal = document.getElementById('packageModal');
+        const packageForm = document.getElementById('packageForm');
+        const packageFormError = document.getElementById('packageFormError');
+
+        function openPackageModal(id, presetPartnerId) {
+            packageForm.reset();
+            packageFormError.classList.add('hidden');
+            document.getElementById('pk_id').value = '';
+            document.getElementById('pk_image').value = '';
+            document.getElementById('pk_image_status').textContent = '';
+            const pkImagePreview = document.getElementById('pk_image_preview');
+            pkImagePreview.src = '';
+            pkImagePreview.classList.add('hidden');
+
+            if (id) {
+                const pk = allPackages.find(x => String(x.id) === String(id));
+                if (!pk) return;
+                document.getElementById('packageModalTitle').textContent = 'แก้ไขแพ็กเกจ';
+                document.getElementById('pk_id').value = pk.id;
+                document.getElementById('pk_partner').value = pk.partner_id;
+                document.getElementById('pk_title').value = pk.title || '';
+                document.getElementById('pk_description').value = pk.description || '';
+                document.getElementById('pk_original_price').value = pk.original_price ?? '';
+                document.getElementById('pk_special_price').value = pk.special_price ?? '';
+                document.getElementById('pk_duration').value = pk.duration || '';
+                document.getElementById('pk_is_promotion').checked = !!pk.is_promotion;
+                document.getElementById('pk_image').value = pk.image_url || '';
+                if (pk.image_url) {
+                    pkImagePreview.src = pk.image_url;
+                    pkImagePreview.classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('packageModalTitle').textContent = 'เพิ่มแพ็กเกจ';
+                if (presetPartnerId) document.getElementById('pk_partner').value = presetPartnerId;
+            }
+            packageModal.classList.remove('hidden');
+        }
+        window.closePackageModal = function() { packageModal.classList.add('hidden'); };
+
+        // ---- Package image upload (reuses the same 'partner-images' bucket) ----
+        document.getElementById('pk_image_file').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+            const statusEl = document.getElementById('pk_image_status');
+            statusEl.textContent = 'กำลังอัปโหลด...';
+            try {
+                const url = await uploadPartnerImage(file);
+                document.getElementById('pk_image').value = url;
+                const preview = document.getElementById('pk_image_preview');
+                preview.src = url;
+                preview.classList.remove('hidden');
+                statusEl.textContent = 'อัปโหลดสำเร็จ ✓';
+            } catch (err) {
+                statusEl.textContent = '⚠️ อัปโหลดไม่สำเร็จ: ' + err.message;
+            }
+        });
+
+        packageForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            packageFormError.classList.add('hidden');
+
+            const id = document.getElementById('pk_id').value;
+            const partnerId = document.getElementById('pk_partner').value;
+            if (!partnerId) { showPackageFormError('กรุณาเลือกพาร์ทเนอร์ (ต้องมีพาร์ทเนอร์อย่างน้อย 1 รายก่อน)'); return; }
+
+            const payload = {
+                partner_id: partnerId,
+                title: document.getElementById('pk_title').value.trim(),
+                description: document.getElementById('pk_description').value.trim() || null,
+                image_url: document.getElementById('pk_image').value.trim() || null,
+                original_price: Number(document.getElementById('pk_original_price').value),
+                special_price: document.getElementById('pk_special_price').value ? Number(document.getElementById('pk_special_price').value) : null,
+                duration: document.getElementById('pk_duration').value.trim() || null,
+                is_promotion: document.getElementById('pk_is_promotion').checked
+            };
+
+            if (!payload.title) { showPackageFormError('กรุณากรอกชื่อโปรแกรม'); return; }
+
+            const saveBtn = document.getElementById('packageSaveBtn');
+            saveBtn.disabled = true; saveBtn.textContent = 'กำลังบันทึก...';
+
+            let error;
+            if (id) {
+                ({ error } = await supabase.from('packages').update(payload).eq('id', id));
+            } else {
+                ({ error } = await supabase.from('packages').insert(payload));
+            }
+
+            saveBtn.disabled = false; saveBtn.textContent = 'บันทึก';
+
+            if (error) { showPackageFormError('บันทึกไม่สำเร็จ: ' + error.message); return; }
+            closePackageModal();
+            await loadPackages();
+            if (!partnerModal.classList.contains('hidden')) {
+                renderPartnerPackagesInModal(document.getElementById('p_id').value);
+            }
+        });
+
+        function showPackageFormError(msg) {
+            packageFormError.textContent = '⚠️ ' + msg;
+            packageFormError.classList.remove('hidden');
+        }
+
+        async function deletePackage(id) {
+            const pk = allPackages.find(x => String(x.id) === String(id));
+            const title = pk ? pk.title : id;
+            if (!confirm(`ลบแพ็กเกจ "${title}"?`)) return;
+
+            const { error } = await supabase.from('packages').delete().eq('id', id);
+            if (error) { alert('ลบไม่สำเร็จ: ' + error.message); return; }
+            loadPackages();
+        }
+    })();
+    </script>
+</body>
+</html>

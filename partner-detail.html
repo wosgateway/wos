@@ -194,6 +194,7 @@
             grid.classList.remove('hidden');
             grid.innerHTML = filtered.map(pkg => `
                 <a href="program-detail.html?id=${pkg.id}" class="package-card card-shadow">
+                    ${pkg.image_url ? `<img src="${pkg.image_url}" alt="${pkg.title}" loading="lazy" class="w-full h-32 object-cover rounded-xl -mt-1" />` : ''}
                     ${pkg.is_promotion ? '<span class="promo-badge w-fit">🔥 โปรโมชัน</span>' : ''}
                     <h3 class="font-bold text-slate-900">${pkg.title}</h3>
                     <p class="text-sm text-slate-500 line-clamp-2">${pkg.description || ''}</p>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="robots" content="noindex, nofollow" />
-    <title>WOS Concierge — Admin: รายการจอง</title>
+    <title>WOS Concierge — Admin: รายการคำขอ</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,6 +20,32 @@
         .status-cancelled { background:#fee2e2; color:#991b1b; }
         .status-select { border:1px solid #e2e8f0; border-radius:.5rem; padding:.35rem .5rem; font-size:.8rem; background:#fff; }
         .admin-row:hover { background:#f8fafc; }
+        
+        /* Status styles for cases */
+        .status-new_lead_b2c { background:#dbeafe; color:#1e40af; }
+        .status-new_lead_b2b { background:#ede9fe; color:#5b21b6; }
+        .status-new { background:#dbeafe; color:#1e40af; }
+        .status-processing { background:#fef3c7; color:#92400e; }
+        .status-done { background:#d1fae5; color:#065f46; }
+        .status-cancelled { background:#fee2e2; color:#991b1b; }
+        
+        /* Service type badges */
+        .service-badge { 
+            display:inline-block; 
+            padding:.15rem .5rem; 
+            border-radius:999px; 
+            font-size:.65rem; 
+            font-weight:500;
+            background:#f1f5f9; 
+            color:#475569;
+        }
+        .service-badge.medical { background:#fce7f3; color:#9d174d; }
+        .service-badge.travel { background:#dbeafe; color:#1e40af; }
+        .service-badge.transport { background:#fef3c7; color:#92400e; }
+        .service-badge.hotel { background:#d1fae5; color:#065f46; }
+        .service-badge.other { background:#f1f5f9; color:#475569; }
+        .service-badge.b2b { background:#ede9fe; color:#5b21b6; }
+        .service-badge.wellness { background:#fce7f3; color:#9d174d; }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -29,7 +55,7 @@
         <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-8 w-full max-w-sm">
             <div class="text-center mb-6">
                 <div class="text-3xl font-bold text-primary">WOS<span class="text-amber-500 font-light text-lg align-top">.os</span></div>
-                <p class="text-slate-500 text-sm mt-1">Admin — รายการจอง (Bookings)</p>
+                <p class="text-slate-500 text-sm mt-1">Admin — รายการคำขอ (Cases)</p>
             </div>
             <label class="form-label">รหัสผ่านทีมงาน</label>
             <input type="password" id="gatePassword" class="form-input" placeholder="••••••••" autocomplete="off" />
@@ -57,7 +83,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">รายการจอง</h1>
+                    <h1 class="text-2xl font-bold text-slate-900">รายการคำขอ</h1>
                     <p id="totalCount" class="text-slate-500 text-sm mt-0.5"></p>
                 </div>
                 <button id="refreshBtn" class="btn-outline-primary">🔄 รีเฟรช</button>
@@ -66,9 +92,10 @@
             <!-- Status filter pills -->
             <div class="flex flex-wrap gap-2 mb-6">
                 <button class="filter-pill active" data-status="all">ทั้งหมด</button>
-                <button class="filter-pill" data-status="pending">รอดำเนินการ</button>
-                <button class="filter-pill" data-status="confirmed">ยืนยันแล้ว</button>
-                <button class="filter-pill" data-status="cancelled">ยกเลิก</button>
+                <button class="filter-pill" data-status="new">📋 ใหม่</button>
+                <button class="filter-pill" data-status="processing">⏳ กำลังดำเนินการ</button>
+                <button class="filter-pill" data-status="done">✅ เสร็จสิ้น</button>
+                <button class="filter-pill" data-status="cancelled">❌ ยกเลิก</button>
             </div>
 
             <!-- Loading -->
@@ -81,7 +108,7 @@
             <!-- Empty -->
             <div id="emptyState" class="empty-state hidden">
                 <div class="icon">📭</div>
-                <p>ยังไม่มีรายการจองในหมวดนี้</p>
+                <p>ยังไม่มีรายการคำขอในหมวดนี้</p>
             </div>
 
             <!-- Error -->
@@ -89,19 +116,20 @@
 
             <!-- Table -->
             <div id="tableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
-                <table class="w-full text-sm min-w-[900px]">
+                <table class="w-full text-sm min-w-[1000px]">
                     <thead>
                         <tr class="text-left text-slate-500 border-b border-slate-100">
-                            <th class="py-3 px-4 font-semibold">วันที่/เวลาจอง</th>
-                            <th class="py-3 px-4 font-semibold">ลูกค้า</th>
+                            <th class="py-3 px-4 font-semibold">วันที่/เวลา</th>
+                            <th class="py-3 px-4 font-semibold">ผู้ป่วย/ลูกค้า</th>
                             <th class="py-3 px-4 font-semibold">ติดต่อ</th>
-                            <th class="py-3 px-4 font-semibold">โปรแกรม / พาร์ทเนอร์</th>
-                            <th class="py-3 px-4 font-semibold">บริการเสริม</th>
-                            <th class="py-3 px-4 font-semibold">แจ้งเมื่อ</th>
+                            <th class="py-3 px-4 font-semibold">ประเภทบริการ</th>
+                            <th class="py-3 px-4 font-semibold">โรงพยาบาล</th>
+                            <th class="py-3 px-4 font-semibold">วันเดินทาง</th>
+                            <th class="py-3 px-4 font-semibold">ข้อความ</th>
                             <th class="py-3 px-4 font-semibold">สถานะ</th>
                         </tr>
                     </thead>
-                    <tbody id="bookingsBody"></tbody>
+                    <tbody id="casesBody"></tbody>
                 </table>
             </div>
         </div>
@@ -113,7 +141,6 @@
         'use strict';
 
         // ⚠️ Client-side gate only — see warning text on screen and in supabase-schema.sql.
-        // Change this value before going live, and again any time staff turnover happens.
         const ADMIN_PASSWORD = 'Boy2517';
         const SESSION_KEY = 'wos-admin-unlocked';
 
@@ -125,7 +152,7 @@
         function unlock() {
             gateScreen.classList.add('hidden');
             dashboard.classList.remove('hidden');
-            loadBookings();
+            loadCases();
         }
 
         document.getElementById('gateSubmit').addEventListener('click', tryUnlock);
@@ -147,26 +174,26 @@
             location.reload();
         });
 
-        // Skip the gate within the same browser tab session (cleared on close)
+        // Skip the gate within the same browser tab session
         try {
             if (sessionStorage.getItem(SESSION_KEY) === '1') unlock();
         } catch (e) {}
 
         // ============================================================
-        // DATA LOADING
+        // DATA LOADING - FROM CASES TABLE
         // ============================================================
         const supabase = window.__supabase;
         let currentFilter = 'all';
-        let allBookings = [];
+        let allCases = [];
 
         const loadingState = document.getElementById('loadingState');
         const emptyState = document.getElementById('emptyState');
         const errorState = document.getElementById('errorState');
         const tableWrap = document.getElementById('tableWrap');
-        const bookingsBody = document.getElementById('bookingsBody');
+        const casesBody = document.getElementById('casesBody');
         const totalCount = document.getElementById('totalCount');
 
-        document.getElementById('refreshBtn').addEventListener('click', loadBookings);
+        document.getElementById('refreshBtn').addEventListener('click', loadCases);
         document.querySelectorAll('.filter-pill').forEach(function(pill) {
             pill.addEventListener('click', function() {
                 document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
@@ -176,23 +203,33 @@
             });
         });
 
-        async function loadBookings() {
+        // 📝 โค้ดปรับใหม่: ดึงข้อมูลจากตาราง cases (ฟอร์มจากหน้า index.html)
+        async function loadCases() {
             if (!supabase) {
                 showError('ไม่สามารถเชื่อมต่อ Supabase ได้ (ตรวจสอบว่าโหลด js/main.js สำเร็จ)');
                 return;
             }
+            
             loadingState.classList.remove('hidden');
             tableWrap.classList.add('hidden');
             emptyState.classList.add('hidden');
             errorState.classList.add('hidden');
 
+            // ดึงข้อมูลจากตาราง cases
             const { data, error } = await supabase
-                .from('bookings')
+                .from('cases')
                 .select(`
-                    id, customer_name, customer_phone, customer_line, country,
-                    booking_date, booking_time, need_transport, need_hotel,
-                    attachment_url, status, created_at,
-                    packages ( title, partners ( name ) )
+                    id,
+                    patient_name,
+                    phone_number,
+                    line_id,
+                    service_type,
+                    hospital,
+                    travel_date,
+                    travel_time,
+                    message,
+                    status,
+                    created_at
                 `)
                 .order('created_at', { ascending: false });
 
@@ -203,7 +240,7 @@
                 return;
             }
 
-            allBookings = data || [];
+            allCases = data || [];
             render();
         }
 
@@ -212,12 +249,23 @@
             errorState.classList.remove('hidden');
         }
 
+        // ============================================================
+        // 🔴 FIX 1: ปรับการ Filter ให้รวม new_lead_b2c และ new_lead_b2b
+        // ============================================================
         function render() {
             const filtered = currentFilter === 'all'
-                ? allBookings
-                : allBookings.filter(b => b.status === currentFilter);
+                ? allCases
+                : allCases.filter(c => {
+                    // ถ้ากรอง "ใหม่" ให้รวมทุกสถานะที่เป็น Lead ใหม่
+                    if (currentFilter === 'new') {
+                        return c.status === 'new' || 
+                               c.status === 'new_lead_b2c' || 
+                               c.status === 'new_lead_b2b';
+                    }
+                    return c.status === currentFilter;
+                });
 
-            totalCount.textContent = `ทั้งหมด ${allBookings.length} รายการ · แสดง ${filtered.length} รายการ`;
+            totalCount.textContent = `ทั้งหมด ${allCases.length} รายการ · แสดง ${filtered.length} รายการ`;
 
             if (filtered.length === 0) {
                 tableWrap.classList.add('hidden');
@@ -226,50 +274,170 @@
             }
             emptyState.classList.add('hidden');
             tableWrap.classList.remove('hidden');
-            bookingsBody.innerHTML = filtered.map(rowHtml).join('');
+            casesBody.innerHTML = filtered.map(rowHtml).join('');
 
-            bookingsBody.querySelectorAll('.status-select').forEach(function(sel) {
+            casesBody.querySelectorAll('.status-select').forEach(function(sel) {
                 sel.addEventListener('change', function() {
                     updateStatus(sel.dataset.id, sel.value, sel);
                 });
             });
         }
 
-        function rowHtml(b) {
-            const pkgTitle = b.packages ? b.packages.title : '-';
-            const partnerName = (b.packages && b.packages.partners) ? b.packages.partners.name : '-';
-            const extras = [
-                b.need_transport ? '🚗 รถรับส่ง' : null,
-                b.need_hotel ? '🏨 โรงแรม' : null
-            ].filter(Boolean).join(' · ') || '-';
-            const createdAt = b.created_at ? new Date(b.created_at).toLocaleString('th-TH') : '-';
+        // ============================================================
+        // 🔴 FIX 2: ปรับการแปลงวันที่ให้ป้องกัน Invalid Date
+        // ============================================================
+        function formatTravelDate(dateStr) {
+            if (!dateStr) return '-';
+            
+            // ถ้าเป็นรูปแบบ ISO (YYYY-MM-DD) ให้แปลงเป็นวันที่ไทย
+            const parsedDate = new Date(dateStr);
+            if (!isNaN(parsedDate)) {
+                return parsedDate.toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+            
+            // ถ้าแปลงไม่ได้ ให้แสดงค่าเดิม
+            return dateStr;
+        }
 
+        // ============================================================
+        // 🔴 FIX 3: ปรับ getServiceTypeLabel ให้อ่านค่าที่ขึ้นต้นได้ยืดหยุ่น
+        // ============================================================
+        function getServiceTypeLabel(type) {
+            if (!type) return '-';
+            
+            // แปลงเป็นตัวเล็กเพื่อตรวจสอบแบบ case-insensitive
+            const lowerType = type.toLowerCase();
+            
+            // ตรวจสอบคำสำคัญในข้อความ
+            if (lowerType.includes('consultation') || 
+                lowerType.includes('treatment') || 
+                lowerType.includes('medical') ||
+                lowerType.includes('การแพทย์') ||
+                lowerType.includes('รักษา')) {
+                return '🏥 การแพทย์ / รักษา';
+            }
+            
+            if (lowerType.includes('checkup') || lowerType.includes('ตรวจสุขภาพ')) {
+                return '💉 ตรวจสุขภาพ';
+            }
+            
+            if (lowerType.includes('wellness') || 
+                lowerType.includes('aesthetic') ||
+                lowerType.includes('ความงาม') ||
+                lowerType.includes('สปา')) {
+                return '✨ ความงาม / สปา';
+            }
+            
+            if (lowerType.includes('b2b') || 
+                lowerType.includes('clinic') || 
+                lowerType.includes('hospital') ||
+                lowerType.includes('โรงพยาบาล') ||
+                lowerType.includes('hotel') ||
+                lowerType.includes('โรงแรม')) {
+                return '🤝 พันธมิตร B2B';
+            }
+            
+            if (lowerType.includes('transport') || 
+                lowerType.includes('ขนส่ง') ||
+                lowerType.includes('รถรับส่ง')) {
+                return '🚗 ขนส่ง / รถรับส่ง';
+            }
+            
+            if (lowerType.includes('travel') || 
+                lowerType.includes('ท่องเที่ยว') ||
+                lowerType.includes('ทัศนศึกษา')) {
+                return '✈️ ท่องเที่ยว';
+            }
+            
+            // ถ้าไม่ตรงเงื่อนไข ให้แสดงข้อความจริงออกมาตรงๆ
+            return type;
+        }
+
+        function getServiceTypeClass(type) {
+            if (!type) return 'other';
+            
+            const lowerType = type.toLowerCase();
+            
+            if (lowerType.includes('consultation') || 
+                lowerType.includes('treatment') || 
+                lowerType.includes('medical') ||
+                lowerType.includes('การแพทย์')) {
+                return 'medical';
+            }
+            
+            if (lowerType.includes('wellness') || 
+                lowerType.includes('aesthetic') ||
+                lowerType.includes('ความงาม')) {
+                return 'wellness';
+            }
+            
+            if (lowerType.includes('b2b') || 
+                lowerType.includes('clinic') || 
+                lowerType.includes('hospital') ||
+                lowerType.includes('hotel')) {
+                return 'b2b';
+            }
+            
+            if (lowerType.includes('transport') || 
+                lowerType.includes('ขนส่ง')) {
+                return 'transport';
+            }
+            
+            if (lowerType.includes('travel') || 
+                lowerType.includes('ท่องเที่ยว')) {
+                return 'travel';
+            }
+            
+            return 'other';
+        }
+
+        // ============================================================
+        // 🔴 FIX 4: ปรับ <select> ให้รองรับ new_lead_b2c และ new_lead_b2b
+        // ============================================================
+        function rowHtml(c) {
+            const createdAt = c.created_at ? new Date(c.created_at).toLocaleString('th-TH') : '-';
+            const travelDisplay = formatTravelDate(c.travel_date) + (c.travel_time ? ' ' + c.travel_time : '');
+
+            // ตรวจสอบสถานะเพื่อเลือก option ที่ถูกต้อง
+            const status = c.status || 'new_lead_b2c';
+            
             return `
                 <tr class="admin-row border-b border-slate-50 align-top">
                     <td class="py-3 px-4 whitespace-nowrap">
-                        <div class="font-medium text-slate-800">${escapeHtml(b.booking_date || '-')}</div>
-                        <div class="text-slate-500 text-xs">${escapeHtml(b.booking_time || '-')}</div>
+                        <div class="text-slate-600 text-xs">${createdAt}</div>
                     </td>
                     <td class="py-3 px-4">
-                        <div class="font-medium text-slate-800">${escapeHtml(b.customer_name)}</div>
-                        <div class="text-slate-500 text-xs">${escapeHtml(b.country || '-')}</div>
+                        <div class="font-medium text-slate-800">${escapeHtml(c.patient_name)}</div>
                     </td>
                     <td class="py-3 px-4 text-slate-600">
-                        <div>${escapeHtml(b.customer_phone)}</div>
-                        ${b.customer_line ? `<div class="text-xs text-slate-400">LINE: ${escapeHtml(b.customer_line)}</div>` : ''}
-                        ${b.attachment_url ? `<a href="${escapeAttr(b.attachment_url)}" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">📎 ไฟล์แนบ</a>` : ''}
+                        <div>${escapeHtml(c.phone_number || '-')}</div>
+                        ${c.line_id ? `<div class="text-xs text-slate-400">LINE: ${escapeHtml(c.line_id)}</div>` : ''}
                     </td>
                     <td class="py-3 px-4">
-                        <div class="font-medium text-slate-800">${escapeHtml(pkgTitle)}</div>
-                        <div class="text-slate-500 text-xs">${escapeHtml(partnerName)}</div>
+                        <span class="service-badge ${getServiceTypeClass(c.service_type)}">
+                            ${getServiceTypeLabel(c.service_type)}
+                        </span>
                     </td>
-                    <td class="py-3 px-4 text-slate-600 text-xs">${extras}</td>
-                    <td class="py-3 px-4 text-slate-500 text-xs whitespace-nowrap">${createdAt}</td>
+                    <td class="py-3 px-4 text-slate-600">
+                        ${escapeHtml(c.hospital || '-')}
+                    </td>
+                    <td class="py-3 px-4 text-slate-600 text-xs whitespace-nowrap">
+                        ${travelDisplay}
+                    </td>
+                    <td class="py-3 px-4 text-slate-600 text-xs max-w-[150px] truncate" title="${escapeHtml(c.message || '')}">
+                        ${escapeHtml(c.message ? c.message.substring(0, 50) + (c.message.length > 50 ? '...' : '') : '-')}
+                    </td>
                     <td class="py-3 px-4">
-                        <select class="status-select status-${escapeAttr(b.status)}" data-id="${escapeAttr(b.id)}">
-                            <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>รอดำเนินการ</option>
-                            <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>ยืนยันแล้ว</option>
-                            <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>ยกเลิก</option>
+                        <select class="status-select status-${escapeAttr(status)}" data-id="${escapeAttr(c.id)}">
+                            <option value="new_lead_b2c" ${status === 'new_lead_b2c' ? 'selected' : ''}>📋 ใหม่ (B2C)</option>
+                            <option value="new_lead_b2b" ${status === 'new_lead_b2b' ? 'selected' : ''}>📋 ใหม่ (B2B)</option>
+                            <option value="processing" ${status === 'processing' ? 'selected' : ''}>⏳ กำลังดำเนินการ</option>
+                            <option value="done" ${status === 'done' ? 'selected' : ''}>✅ เสร็จสิ้น</option>
+                            <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>❌ ยกเลิก</option>
                         </select>
                     </td>
                 </tr>
@@ -279,7 +447,7 @@
         async function updateStatus(id, newStatus, selectEl) {
             selectEl.disabled = true;
             const { error } = await supabase
-                .from('bookings')
+                .from('cases')
                 .update({ status: newStatus })
                 .eq('id', id);
             selectEl.disabled = false;
@@ -289,8 +457,8 @@
                 return;
             }
             selectEl.className = 'status-select status-' + newStatus;
-            const b = allBookings.find(x => x.id === id);
-            if (b) b.status = newStatus;
+            const c = allCases.find(x => x.id === id);
+            if (c) c.status = newStatus;
         }
 
         function escapeHtml(str) {

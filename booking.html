@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS Concierge — จองบริการ</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-50">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section-padding !pt-10">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6">
+
+            <div class="step-track">
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot active"></span>
+            </div>
+
+            <div class="text-center mb-8">
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">
+                    <span class="lang-content active" data-lang="th">แบบฟอร์มจองบริการ Concierge</span>
+                    <span class="lang-content" data-lang="lo">ແບບຟອມຈອງບໍລິການ Concierge</span>
+                    <span class="lang-content" data-lang="en">Concierge Booking Form</span>
+                </h1>
+                <p id="programSummary" class="text-slate-500 mt-2 text-sm"></p>
+            </div>
+
+            <div id="loadingState" class="skeleton h-96"></div>
+            <div id="errorState" class="empty-state hidden">
+                <span class="icon">⚠️</span>
+                <p>ไม่พบโปรแกรมที่ต้องการจอง กรุณาเลือกโปรแกรมใหม่</p>
+            </div>
+
+            <form id="bookingForm" class="bg-white rounded-2xl card-shadow p-6 sm:p-8 space-y-5 hidden">
+                <div class="grid sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="form-label" for="bookingDate">
+                            <span class="lang-content active" data-lang="th">วันที่รับบริการ *</span>
+                            <span class="lang-content" data-lang="lo">ວັນທີ່ຮັບບໍລິການ *</span>
+                            <span class="lang-content" data-lang="en">Service Date *</span>
+                        </label>
+                        <input type="date" id="bookingDate" class="form-input" required />
+                    </div>
+                    <div>
+                        <label class="form-label" for="bookingTime">
+                            <span class="lang-content active" data-lang="th">เวลาที่สะดวก *</span>
+                            <span class="lang-content" data-lang="lo">ເວລາທີ່ສະດວກ *</span>
+                            <span class="lang-content" data-lang="en">Preferred Time *</span>
+                        </label>
+                        <input type="time" id="bookingTime" class="form-input" required />
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-6 py-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="needTransport" class="w-4 h-4" />
+                        <span class="text-sm font-medium text-slate-700">🚗
+                            <span class="lang-content active" data-lang="th">ต้องการรถรับส่งข้ามพรมแดน</span>
+                            <span class="lang-content" data-lang="lo">ຕ້ອງການລົດຮັບສົ່ງຂ້າມແດນ</span>
+                            <span class="lang-content" data-lang="en">Need cross-border transport</span>
+                        </span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="needHotel" class="w-4 h-4" />
+                        <span class="text-sm font-medium text-slate-700">🏨
+                            <span class="lang-content active" data-lang="th">ต้องการที่พัก/โรงแรม</span>
+                            <span class="lang-content" data-lang="lo">ຕ້ອງການທີ່ພັກ/ໂຮງແຮມ</span>
+                            <span class="lang-content" data-lang="en">Need hotel/accommodation</span>
+                        </span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="form-label" for="customerName">
+                        <span class="lang-content active" data-lang="th">ชื่อ-นามสกุล ผู้ใช้บริการ *</span>
+                        <span class="lang-content" data-lang="lo">ຊື່-ນາມສະກຸນ ຜູ້ໃຊ້ບໍລິການ *</span>
+                        <span class="lang-content" data-lang="en">Full Name *</span>
+                    </label>
+                    <input type="text" id="customerName" class="form-input" required />
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="form-label" for="customerPhone">
+                            <span class="lang-content active" data-lang="th">เบอร์โทรศัพท์ *</span>
+                            <span class="lang-content" data-lang="lo">ເບີໂທລະສັບ *</span>
+                            <span class="lang-content" data-lang="en">Phone Number *</span>
+                        </label>
+                        <input type="tel" id="customerPhone" class="form-input" required />
+                    </div>
+                    <div>
+                        <label class="form-label" for="customerLine">
+                            <span class="lang-content active" data-lang="th">LINE ID</span>
+                            <span class="lang-content" data-lang="lo">LINE ID</span>
+                            <span class="lang-content" data-lang="en">LINE ID</span>
+                        </label>
+                        <input type="text" id="customerLine" class="form-input" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" for="country">
+                        <span class="lang-content active" data-lang="th">ประเทศที่อยู่อาศัยปัจจุบัน *</span>
+                        <span class="lang-content" data-lang="lo">ປະເທດທີ່ອາໄສຢູ່ປັດຈຸບັນ *</span>
+                        <span class="lang-content" data-lang="en">Current Country of Residence *</span>
+                    </label>
+                    <select id="country" class="form-input" required>
+                        <option value="">-- เลือก / ເລືອກ / Select --</option>
+                        <option value="Laos">ลาว / ລາວ / Laos</option>
+                        <option value="Thailand">ไทย / ໄທ / Thailand</option>
+                        <option value="Other">อื่นๆ / ອື່ນໆ / Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" for="attachment">
+                        <span class="lang-content active" data-lang="th">อัปโหลดเอกสาร/ผลตรวจ (ถ้ามี)</span>
+                        <span class="lang-content" data-lang="lo">ອັບໂຫລດເອກະສານ/ຜົນກວດ (ຖ້າມີ)</span>
+                        <span class="lang-content" data-lang="en">Upload documents/results (optional)</span>
+                    </label>
+                    <input type="file" id="attachment" class="form-input" accept=".pdf,.jpg,.jpeg,.png" />
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-primary w-full justify-center text-base mt-2">
+                    <span id="submitBtnText">
+                        <span class="lang-content active" data-lang="th">ยืนยันการจอง</span>
+                        <span class="lang-content" data-lang="lo">ຢືນຢັນການຈອງ</span>
+                        <span class="lang-content" data-lang="en">Confirm Booking</span>
+                    </span>
+                    <span id="submitLoading" class="hidden">⏳ กำลังบันทึก...</span>
+                </button>
+
+                <div id="formStatus" class="hidden"></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-sm text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <p>&copy; <span id="year"></span> WOS.os — Healthcare Hospitality Concierge</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        const packageId = window.getQueryParam('package_id');
+        let currentPackage = null;
+
+        if (!packageId) {
+            showError();
+        } else {
+            loadPackage();
+        }
+
+        function showError() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        async function loadPackage() {
+            try {
+                currentPackage = await window.fetchPackageById(packageId);
+                const partnerName = currentPackage.partners ? currentPackage.partners.name : '';
+                document.getElementById('programSummary').textContent =
+                    `${currentPackage.title}${partnerName ? ' — ' + partnerName : ''}`;
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('bookingForm').classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                showError();
+            }
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const requiredIds = ['bookingDate', 'bookingTime', 'customerName', 'customerPhone', 'country'];
+            const isValid = window.validateRequiredFields(requiredIds.map(id => {
+                document.getElementById(id).setAttribute('required', 'required');
+                return id;
+            }));
+            if (!isValid) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('submitBtnText');
+            const btnLoading = document.getElementById('submitLoading');
+            const statusEl = document.getElementById('formStatus');
+
+            submitBtn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+
+            try {
+                let attachmentUrl = null;
+                const fileInput = document.getElementById('attachment');
+                if (fileInput.files && fileInput.files[0]) {
+                    try {
+                        attachmentUrl = await window.uploadBookingAttachment(fileInput.files[0]);
+                    } catch (uploadErr) {
+                        console.warn('Attachment upload failed, continuing without it:', uploadErr);
+                    }
+                }
+
+                const payload = {
+                    package_id: packageId,
+                    customer_name: document.getElementById('customerName').value.trim(),
+                    customer_phone: document.getElementById('customerPhone').value.trim(),
+                    customer_line: document.getElementById('customerLine').value.trim() || null,
+                    country: document.getElementById('country').value,
+                    booking_date: document.getElementById('bookingDate').value,
+                    booking_time: document.getElementById('bookingTime').value,
+                    need_transport: document.getElementById('needTransport').checked,
+                    need_hotel: document.getElementById('needHotel').checked,
+                    attachment_url: attachmentUrl,
+                    status: 'pending'
+                };
+
+                await window.submitBooking(payload);
+
+                window.showFormStatus(statusEl,
+                    '✅ จองสำเร็จ! ทีมงาน WOS จะติดต่อกลับเพื่อยืนยันการนัดหมายภายใน 24 ชม.',
+                    'success');
+                document.getElementById('bookingForm').reset();
+                submitBtn.disabled = true;
+                btnLoading.classList.add('hidden');
+                btnText.classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                window.showFormStatus(statusEl, '❌ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง', 'error');
+                submitBtn.disabled = false;
+                btnLoading.classList.add('hidden');
+                btnText.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

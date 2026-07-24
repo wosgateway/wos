@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS Concierge — รายละเอียดโปรแกรม</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-50">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
+        <nav class="breadcrumb">
+            <a href="home.html">หน้าหลัก</a> <span class="mx-1">/</span>
+            <a id="breadcrumbPartner" href="#">พาร์ทเนอร์</a> <span class="mx-1">/</span>
+            <span id="breadcrumbCurrent" class="text-slate-800 font-medium">โปรแกรม</span>
+        </nav>
+    </div>
+
+    <div id="loadingState" class="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
+        <div class="skeleton h-8 w-2/3 mb-4"></div>
+        <div class="skeleton h-40 mb-4"></div>
+    </div>
+
+    <div id="errorState" class="empty-state hidden max-w-4xl mx-auto px-4 sm:px-6">
+        <span class="icon">⚠️</span>
+        <p>ไม่พบโปรแกรมที่ต้องการ</p>
+    </div>
+
+    <div id="content" class="hidden pb-32">
+        <section class="pt-6">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+                <span id="promoBadge" class="promo-badge mb-3 hidden">🔥 โปรโมชันพิเศษ</span>
+                <h1 id="programTitle" class="text-2xl sm:text-3xl font-bold text-slate-900"></h1>
+                <p id="partnerLink" class="text-slate-500 mt-1"></p>
+
+                <div class="bg-white rounded-2xl card-shadow p-6 mt-6">
+                    <div class="flex items-end gap-3 flex-wrap">
+                        <span id="priceOriginal" class="price-original hidden"></span>
+                        <span id="priceSpecial" class="price-special"></span>
+                    </div>
+                    <p id="programDuration" class="text-sm text-slate-500 mt-1"></p>
+
+                    <p id="programDescription" class="text-slate-600 mt-4 leading-relaxed"></p>
+
+                    <div class="mt-6">
+                        <h3 class="font-bold text-slate-900 mb-3">
+                            <span class="lang-content active" data-lang="th">สิ่งที่จะได้รับ</span>
+                            <span class="lang-content" data-lang="lo">ສິ່ງທີ່ຈະໄດ້ຮັບ</span>
+                            <span class="lang-content" data-lang="en">What's included</span>
+                        </h3>
+                        <div id="inclusionsList" class="space-y-2"></div>
+                    </div>
+
+                    <div id="preparationBlock" class="mt-6 bg-amber-50 border border-amber-100 rounded-xl p-4 hidden">
+                        <h4 class="font-bold text-amber-800 text-sm mb-1">
+                            <span class="lang-content active" data-lang="th">การเตรียมตัว</span>
+                            <span class="lang-content" data-lang="lo">ການກະກຽມ</span>
+                            <span class="lang-content" data-lang="en">Preparation</span>
+                        </h4>
+                        <p id="programPreparation" class="text-sm text-amber-700"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== STICKY BOOK NOW BAR ===== -->
+    <div id="stickyBar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] p-4 hidden z-40">
+        <div class="max-w-4xl mx-auto px-4 sm:px-2 flex items-center justify-between gap-4">
+            <div>
+                <p class="text-xs text-slate-400">
+                    <span class="lang-content active" data-lang="th">ราคาเริ่มต้น</span>
+                    <span class="lang-content" data-lang="lo">ລາຄາເລີ່ມຕົ້ນ</span>
+                    <span class="lang-content" data-lang="en">Starting from</span>
+                </p>
+                <p id="stickyPrice" class="text-lg font-bold text-primary"></p>
+            </div>
+            <a id="bookNowBtn" href="#" class="btn-primary px-8">
+                <span class="lang-content active" data-lang="th">จองบริการนี้</span>
+                <span class="lang-content" data-lang="lo">ຈອງບໍລິການນີ້</span>
+                <span class="lang-content" data-lang="en">Book Now</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        const packageId = window.getQueryParam('id');
+
+        if (!packageId) {
+            showError();
+        } else {
+            loadProgram();
+        }
+
+        function showError() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        async function loadProgram() {
+            try {
+                const pkg = await window.fetchPackageById(packageId);
+                renderProgram(pkg);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('content').classList.remove('hidden');
+                document.getElementById('stickyBar').classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                showError();
+            }
+        }
+
+        function renderProgram(pkg) {
+            const partner = pkg.partners || {};
+            document.title = `WOS Concierge — ${pkg.title}`;
+            document.getElementById('programTitle').textContent = pkg.title;
+            document.getElementById('breadcrumbCurrent').textContent = pkg.title;
+
+            if (partner.name) {
+                document.getElementById('partnerLink').innerHTML =
+                    `จัดโดย <a href="partner-detail.html?id=${partner.id}" class="text-primary font-medium hover:underline">${partner.name}</a>`;
+                document.getElementById('breadcrumbPartner').href = `partner-detail.html?id=${partner.id}`;
+                document.getElementById('breadcrumbPartner').textContent = partner.name;
+            }
+
+            const finalPrice = pkg.special_price || pkg.original_price;
+            document.getElementById('priceSpecial').textContent = window.formatTHB(finalPrice);
+            document.getElementById('stickyPrice').textContent = window.formatTHB(finalPrice);
+            if (pkg.special_price && pkg.original_price) {
+                document.getElementById('priceOriginal').textContent = window.formatTHB(pkg.original_price);
+                document.getElementById('priceOriginal').classList.remove('hidden');
+            }
+            if (pkg.duration) {
+                document.getElementById('programDuration').textContent = `⏱ ${pkg.duration}`;
+            }
+            document.getElementById('programDescription').textContent = pkg.description || '';
+
+            if (pkg.is_promotion) {
+                document.getElementById('promoBadge').classList.remove('hidden');
+            }
+
+            const inclusions = Array.isArray(pkg.inclusions) ? pkg.inclusions : [];
+            document.getElementById('inclusionsList').innerHTML = inclusions.map(item =>
+                `<div class="inclusion-item">${item}</div>`
+            ).join('') || '<p class="text-sm text-slate-400">ไม่ระบุ</p>';
+
+            if (pkg.preparation) {
+                document.getElementById('programPreparation').textContent = pkg.preparation;
+                document.getElementById('preparationBlock').classList.remove('hidden');
+            }
+
+            document.getElementById('bookNowBtn').href = `booking.html?package_id=${pkg.id}`;
+        }
+    </script>
+</body>
+</html>

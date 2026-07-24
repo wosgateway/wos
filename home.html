@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS Concierge — เลือกบริการ</title>
+    <meta name="description" content="เลือกหมวดหมู่บริการ โรงพยาบาล คลินิก ทันตกรรม เวลเนส สปา โรงแรมและรถรับส่ง ในระบบเดียว" />
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-50">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="section-padding !pt-12 !pb-10 bg-gradient-to-b from-primary-light to-slate-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+            <span class="text-primary font-semibold text-sm tracking-widest uppercase">WOS Concierge</span>
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-2">
+                <span class="lang-content active" data-lang="th">วันนี้อยากดูแลตัวเองเรื่องไหน</span>
+                <span class="lang-content" data-lang="lo">ມື້ນີ້ຢາກເບິ່ງແຍງຕົນເອງເລື່ອງໃດ</span>
+                <span class="lang-content" data-lang="en">What would you like to take care of today?</span>
+            </h1>
+            <p class="text-slate-600 mt-3">
+                <span class="lang-content active" data-lang="th">เลือกหมวดหมู่ เพื่อดูพาร์ทเนอร์และโปรแกรมที่ใช่สำหรับคุณ</span>
+                <span class="lang-content" data-lang="lo">ເລືອກໝວດໝູ່ ເພື່ອເບິ່ງຄູ່ຮ່ວມງານ ແລະ ໂປຣແກຣມທີ່ແມ່ນສຳລັບທ່ານ</span>
+                <span class="lang-content" data-lang="en">Pick a category to see matching partners and programs</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== CATEGORY GRID ===== -->
+    <section class="section-padding !pt-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div id="categoryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Populated by JS from window.WOS_CATEGORIES -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-sm text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <p>&copy; <span id="year"></span> WOS.os — Healthcare Hospitality Concierge</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        function renderCategories() {
+            const lang = window.getCurrentLang();
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = window.WOS_CATEGORIES.map(cat => `
+                <a href="category.html?slug=${cat.slug}" class="category-card card-shadow">
+                    <div class="icon-wrap">${cat.icon}</div>
+                    <div class="cat-label">${cat.label[lang] || cat.label.th}</div>
+                </a>
+            `).join('');
+        }
+
+        renderCategories();
+        // Re-render labels when language changes
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(renderCategories, 0));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS Concierge — รายการพาร์ทเนอร์</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-slate-50">
+
+    <!-- ===== HEADER ===== -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
+        <nav class="breadcrumb">
+            <a href="home.html">หน้าหลัก</a> <span class="mx-1">/</span> <span id="breadcrumbCurrent" class="text-slate-800 font-medium">หมวดหมู่</span>
+        </nav>
+    </div>
+
+    <!-- ===== CATEGORY TITLE ===== -->
+    <section class="pt-4 pb-6">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center gap-4">
+            <div id="categoryIcon" class="w-14 h-14 rounded-2xl bg-primary-light text-primary flex items-center justify-center text-3xl">🏥</div>
+            <div>
+                <h1 id="categoryTitle" class="text-2xl sm:text-3xl font-bold text-slate-900">หมวดหมู่</h1>
+                <p id="categoryCount" class="text-slate-500 text-sm mt-0.5"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PARTNER GRID ===== -->
+    <section class="pb-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div id="loadingState" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+            </div>
+            <div id="partnerGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+            <div id="emptyState" class="empty-state hidden">
+                <span class="icon">🔍</span>
+                <p><span class="lang-content active" data-lang="th">ยังไม่มีพาร์ทเนอร์ในหมวดหมู่นี้</span>
+                   <span class="lang-content" data-lang="lo">ຍັງບໍ່ມີຄູ່ຮ່ວມງານໃນໝວດໝູ່ນີ້</span>
+                   <span class="lang-content" data-lang="en">No partners in this category yet</span></p>
+            </div>
+            <div id="errorState" class="empty-state hidden">
+                <span class="icon">⚠️</span>
+                <p><span class="lang-content active" data-lang="th">โหลดข้อมูลไม่สำเร็จ กรุณาลองใหม่</span>
+                   <span class="lang-content" data-lang="lo">ໂຫລດຂໍ້ມູນບໍ່ສຳເລັດ ກະລຸນາລອງໃໝ່</span>
+                   <span class="lang-content" data-lang="en">Couldn't load data. Please try again</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-sm text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <p>&copy; <span id="year"></span> WOS.os — Healthcare Hospitality Concierge</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        const slug = window.getQueryParam('slug');
+        const category = window.getCategoryBySlug(slug);
+        const lang = window.getCurrentLang();
+
+        function t(labelObj) {
+            return labelObj[lang] || labelObj.th;
+        }
+
+        if (!category) {
+            document.getElementById('categoryTitle').textContent = 'ไม่พบหมวดหมู่';
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        } else {
+            document.getElementById('categoryIcon').textContent = category.icon;
+            document.getElementById('categoryTitle').textContent = t(category.label);
+            document.getElementById('breadcrumbCurrent').textContent = t(category.label);
+            document.title = `WOS Concierge — ${t(category.label)}`;
+
+            loadPartners();
+        }
+
+        async function loadPartners() {
+            try {
+                const partners = await window.fetchPartners(category.dbCategories);
+                document.getElementById('loadingState').classList.add('hidden');
+
+                if (!partners || partners.length === 0) {
+                    document.getElementById('emptyState').classList.remove('hidden');
+                    document.getElementById('categoryCount').textContent = '';
+                    return;
+                }
+
+                document.getElementById('categoryCount').textContent =
+                    lang === 'en' ? `${partners.length} partners` :
+                    lang === 'lo' ? `${partners.length} ຄູ່ຮ່ວມງານ` :
+                    `${partners.length} พาร์ทเนอร์`;
+
+                const grid = document.getElementById('partnerGrid');
+                grid.classList.remove('hidden');
+                grid.innerHTML = partners.map(p => `
+                    <a href="partner-detail.html?id=${p.id}" class="partner-card card-shadow">
+                        <div class="cover">
+                            <img src="${p.cover_image_url || 'images/hero/hero-main.webp'}" alt="${p.name}" loading="lazy" />
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <h3 class="font-bold text-slate-900 leading-snug">${p.name}</h3>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-2">📍 ${p.province || '-'}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="rating-badge">⭐ ${p.rating ?? '-'}</span>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

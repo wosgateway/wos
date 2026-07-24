@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="robots" content="noindex, nofollow" />
-    <title>WOS Concierge — Admin: รายการคำขอ</title>
+    <title>WOS Concierge — Admin Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,14 +14,47 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="css/style.css" />
     <style>
+        /* ===== COMMON STYLES ===== */
         .status-badge { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .65rem; border-radius:999px; font-size:.75rem; font-weight:600; }
-        .status-pending { background:#fef3c7; color:#92400e; }
-        .status-confirmed { background:#d1fae5; color:#065f46; }
-        .status-cancelled { background:#fee2e2; color:#991b1b; }
         .status-select { border:1px solid #e2e8f0; border-radius:.5rem; padding:.35rem .5rem; font-size:.8rem; background:#fff; }
         .admin-row:hover { background:#f8fafc; }
         
-        /* Status styles for cases */
+        /* ===== TAB STYLES ===== */
+        .tab-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: transparent;
+            color: #64748b;
+            border: 1px solid transparent;
+        }
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .tab-btn.active {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        .tab-btn .badge-count {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 999px;
+            margin-left: 0.35rem;
+        }
+        .tab-btn.active .badge-count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        /* ===== CASES STATUS STYLES ===== */
         .status-new_lead_b2c { background:#dbeafe; color:#1e40af; }
         .status-new_lead_b2b { background:#ede9fe; color:#5b21b6; }
         .status-new { background:#dbeafe; color:#1e40af; }
@@ -29,7 +62,12 @@
         .status-done { background:#d1fae5; color:#065f46; }
         .status-cancelled { background:#fee2e2; color:#991b1b; }
         
-        /* Service type badges */
+        /* ===== BOOKINGS STATUS STYLES ===== */
+        .status-pending { background:#fef3c7; color:#92400e; }
+        .status-confirmed { background:#d1fae5; color:#065f46; }
+        .status-cancelled { background:#fee2e2; color:#991b1b; }
+        
+        /* ===== SERVICE BADGES ===== */
         .service-badge { 
             display:inline-block; 
             padding:.15rem .5rem; 
@@ -46,6 +84,51 @@
         .service-badge.other { background:#f1f5f9; color:#475569; }
         .service-badge.b2b { background:#ede9fe; color:#5b21b6; }
         .service-badge.wellness { background:#fce7f3; color:#9d174d; }
+        
+        /* ===== FILTER PILLS ===== */
+        .filter-pill {
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+        }
+        .filter-pill:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .filter-pill.active {
+            background: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+        
+        /* ===== SECTIONS ===== */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        
+        .skeleton { 
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.5rem;
+            height: 3.5rem;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #94a3b8;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 0.5rem; }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -55,21 +138,21 @@
         <div class="bg-white rounded-2xl card-shadow border border-slate-100 p-8 w-full max-w-sm">
             <div class="text-center mb-6">
                 <div class="text-3xl font-bold text-primary">WOS<span class="text-amber-500 font-light text-lg align-top">.os</span></div>
-                <p class="text-slate-500 text-sm mt-1">Admin — รายการคำขอ (Cases)</p>
+                <p class="text-slate-500 text-sm mt-1">Admin Dashboard</p>
             </div>
             <label class="form-label">รหัสผ่านทีมงาน</label>
             <input type="password" id="gatePassword" class="form-input" placeholder="••••••••" autocomplete="off" />
             <p id="gateError" class="text-red-600 text-sm mt-2 hidden">รหัสผ่านไม่ถูกต้อง</p>
             <button id="gateSubmit" class="btn-primary w-full justify-center mt-4">เข้าสู่ระบบ</button>
             <p class="text-xs text-slate-400 mt-4 leading-relaxed">
-                ⚠️ หน้านี้ป้องกันด้วยรหัสผ่านฝั่งเบราว์เซอร์เท่านั้น ไม่ใช่การยืนยันตัวตนระดับฐานข้อมูล
-                ห้ามแชร์ลิงก์หรือรหัสผ่านนี้ให้บุคคลภายนอก
+                ⚠️ หน้านี้ป้องกันด้วยรหัสผ่านฝั่งเบราว์เซอร์เท่านั้น
             </p>
         </div>
     </div>
 
-    <!-- ===== ADMIN DASHBOARD (hidden until unlocked) ===== -->
+    <!-- ===== ADMIN DASHBOARD ===== -->
     <div id="dashboard" class="hidden">
+        <!-- Header -->
         <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
                 <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
@@ -80,58 +163,106 @@
             </div>
         </header>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-900">รายการคำขอ</h1>
-                    <p id="totalCount" class="text-slate-500 text-sm mt-0.5"></p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+            
+            <!-- ===== TAB BUTTONS ===== -->
+            <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-4">
+                <button class="tab-btn active" data-tab="cases">
+                    📋 คำขอทั่วไป (Cases)
+                    <span class="badge-count" id="casesCount">0</span>
+                </button>
+                <button class="tab-btn" data-tab="bookings">
+                    🏨 การจอง (Bookings)
+                    <span class="badge-count" id="bookingsCount">0</span>
+                </button>
+            </div>
+
+            <!-- ===== TAB PANEL: CASES ===== -->
+            <div id="panel-cases" class="tab-panel active">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">📋 รายการคำขอทั่วไป</h2>
+                        <p id="casesTotalCount" class="text-slate-500 text-sm mt-0.5"></p>
+                    </div>
+                    <button class="btn-outline-primary" data-refresh="cases">🔄 รีเฟรช</button>
                 </div>
-                <button id="refreshBtn" class="btn-outline-primary">🔄 รีเฟรช</button>
+
+                <!-- Filter pills -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="filter-pill active" data-status="all" data-table="cases">ทั้งหมด</button>
+                    <button class="filter-pill" data-status="new" data-table="cases">📋 ใหม่</button>
+                    <button class="filter-pill" data-status="processing" data-table="cases">⏳ กำลังดำเนินการ</button>
+                    <button class="filter-pill" data-status="done" data-table="cases">✅ เสร็จสิ้น</button>
+                    <button class="filter-pill" data-status="cancelled" data-table="cases">❌ ยกเลิก</button>
+                </div>
+
+                <!-- Loading -->
+                <div id="casesLoading" class="space-y-3"><div class="skeleton h-16"></div><div class="skeleton h-16"></div><div class="skeleton h-16"></div></div>
+                <div id="casesEmpty" class="empty-state hidden"><div class="icon">📭</div><p>ยังไม่มีรายการคำขอในหมวดนี้</p></div>
+                <div id="casesError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
+
+                <!-- Table -->
+                <div id="casesTableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
+                    <table class="w-full text-sm min-w-[1000px]">
+                        <thead>
+                            <tr class="text-left text-slate-500 border-b border-slate-100">
+                                <th class="py-3 px-4 font-semibold">วันที่/เวลา</th>
+                                <th class="py-3 px-4 font-semibold">ผู้ป่วย/ลูกค้า</th>
+                                <th class="py-3 px-4 font-semibold">ติดต่อ</th>
+                                <th class="py-3 px-4 font-semibold">ประเภทบริการ</th>
+                                <th class="py-3 px-4 font-semibold">โรงพยาบาล</th>
+                                <th class="py-3 px-4 font-semibold">วันเดินทาง</th>
+                                <th class="py-3 px-4 font-semibold">ข้อความ</th>
+                                <th class="py-3 px-4 font-semibold">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="casesBody"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Status filter pills -->
-            <div class="flex flex-wrap gap-2 mb-6">
-                <button class="filter-pill active" data-status="all">ทั้งหมด</button>
-                <button class="filter-pill" data-status="new">📋 ใหม่</button>
-                <button class="filter-pill" data-status="processing">⏳ กำลังดำเนินการ</button>
-                <button class="filter-pill" data-status="done">✅ เสร็จสิ้น</button>
-                <button class="filter-pill" data-status="cancelled">❌ ยกเลิก</button>
+            <!-- ===== TAB PANEL: BOOKINGS ===== -->
+            <div id="panel-bookings" class="tab-panel">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">🏨 รายการจองแพ็กเกจ</h2>
+                        <p id="bookingsTotalCount" class="text-slate-500 text-sm mt-0.5"></p>
+                    </div>
+                    <button class="btn-outline-primary" data-refresh="bookings">🔄 รีเฟรช</button>
+                </div>
+
+                <!-- Filter pills -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="filter-pill active" data-status="all" data-table="bookings">ทั้งหมด</button>
+                    <button class="filter-pill" data-status="pending" data-table="bookings">⏳ รอดำเนินการ</button>
+                    <button class="filter-pill" data-status="confirmed" data-table="bookings">✅ ยืนยันแล้ว</button>
+                    <button class="filter-pill" data-status="cancelled" data-table="bookings">❌ ยกเลิก</button>
+                </div>
+
+                <!-- Loading -->
+                <div id="bookingsLoading" class="space-y-3"><div class="skeleton h-16"></div><div class="skeleton h-16"></div><div class="skeleton h-16"></div></div>
+                <div id="bookingsEmpty" class="empty-state hidden"><div class="icon">📭</div><p>ยังไม่มีรายการจองในหมวดนี้</p></div>
+                <div id="bookingsError" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
+
+                <!-- Table -->
+                <div id="bookingsTableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
+                    <table class="w-full text-sm min-w-[900px]">
+                        <thead>
+                            <tr class="text-left text-slate-500 border-b border-slate-100">
+                                <th class="py-3 px-4 font-semibold">วันที่/เวลาจอง</th>
+                                <th class="py-3 px-4 font-semibold">ลูกค้า</th>
+                                <th class="py-3 px-4 font-semibold">ติดต่อ</th>
+                                <th class="py-3 px-4 font-semibold">โปรแกรม / พาร์ทเนอร์</th>
+                                <th class="py-3 px-4 font-semibold">บริการเสริม</th>
+                                <th class="py-3 px-4 font-semibold">แจ้งเมื่อ</th>
+                                <th class="py-3 px-4 font-semibold">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsBody"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- Loading -->
-            <div id="loadingState" class="space-y-3">
-                <div class="skeleton h-16"></div>
-                <div class="skeleton h-16"></div>
-                <div class="skeleton h-16"></div>
-            </div>
-
-            <!-- Empty -->
-            <div id="emptyState" class="empty-state hidden">
-                <div class="icon">📭</div>
-                <p>ยังไม่มีรายการคำขอในหมวดนี้</p>
-            </div>
-
-            <!-- Error -->
-            <div id="errorState" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm"></div>
-
-            <!-- Table -->
-            <div id="tableWrap" class="hidden bg-white rounded-2xl card-shadow border border-slate-100 overflow-x-auto">
-                <table class="w-full text-sm min-w-[1000px]">
-                    <thead>
-                        <tr class="text-left text-slate-500 border-b border-slate-100">
-                            <th class="py-3 px-4 font-semibold">วันที่/เวลา</th>
-                            <th class="py-3 px-4 font-semibold">ผู้ป่วย/ลูกค้า</th>
-                            <th class="py-3 px-4 font-semibold">ติดต่อ</th>
-                            <th class="py-3 px-4 font-semibold">ประเภทบริการ</th>
-                            <th class="py-3 px-4 font-semibold">โรงพยาบาล</th>
-                            <th class="py-3 px-4 font-semibold">วันเดินทาง</th>
-                            <th class="py-3 px-4 font-semibold">ข้อความ</th>
-                            <th class="py-3 px-4 font-semibold">สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="casesBody"></tbody>
-                </table>
-            </div>
         </div>
     </div>
 
@@ -140,10 +271,28 @@
     (function() {
         'use strict';
 
-        // ⚠️ Client-side gate only — see warning text on screen and in supabase-schema.sql.
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
         const ADMIN_PASSWORD = 'Boy2517';
         const SESSION_KEY = 'wos-admin-unlocked';
 
+        // ============================================================
+        // 🔧 SUPABASE CLIENT WITH FALLBACK (FIXED)
+        // ============================================================
+        const SUPABASE_URL = 'https://ayjtfbmatwpyoxayrpxs.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_hCMmgE8MmleH203P1Vfykg_riuaVQip';
+        
+        // ✅ ใช้ window.__supabase ถ้ามี ถ้าไม่มีให้สร้าง Client ใหม่จากค่าที่กำหนด
+        const supabase = window.__supabase || 
+            (typeof window.supabase !== 'undefined' ? 
+                window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : 
+                null
+            );
+
+        // ============================================================
+        // PASSWORD GATE
+        // ============================================================
         const gateScreen = document.getElementById('gateScreen');
         const dashboard = document.getElementById('dashboard');
         const gatePassword = document.getElementById('gatePassword');
@@ -153,6 +302,7 @@
             gateScreen.classList.add('hidden');
             dashboard.classList.remove('hidden');
             loadCases();
+            loadBookings();
         }
 
         document.getElementById('gateSubmit').addEventListener('click', tryUnlock);
@@ -174,48 +324,88 @@
             location.reload();
         });
 
-        // Skip the gate within the same browser tab session
         try {
             if (sessionStorage.getItem(SESSION_KEY) === '1') unlock();
         } catch (e) {}
 
         // ============================================================
-        // DATA LOADING - FROM CASES TABLE
+        // STATE
         // ============================================================
-        const supabase = window.__supabase;
-        let currentFilter = 'all';
+        // Cases state
         let allCases = [];
+        let casesFilter = 'all';
 
-        const loadingState = document.getElementById('loadingState');
-        const emptyState = document.getElementById('emptyState');
-        const errorState = document.getElementById('errorState');
-        const tableWrap = document.getElementById('tableWrap');
-        const casesBody = document.getElementById('casesBody');
-        const totalCount = document.getElementById('totalCount');
+        // Bookings state
+        let allBookings = [];
+        let bookingsFilter = 'all';
 
-        document.getElementById('refreshBtn').addEventListener('click', loadCases);
-        document.querySelectorAll('.filter-pill').forEach(function(pill) {
-            pill.addEventListener('click', function() {
-                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-                currentFilter = pill.dataset.status;
-                render();
+        // ============================================================
+        // TAB SWITCHING
+        // ============================================================
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const tabName = btn.dataset.tab;
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-' + tabName).classList.add('active');
             });
         });
 
-        // 📝 โค้ดปรับใหม่: ดึงข้อมูลจากตาราง cases (ฟอร์มจากหน้า index.html)
+        // ============================================================
+        // FILTER PILLS (shared)
+        // ============================================================
+        document.querySelectorAll('.filter-pill').forEach(function(pill) {
+            pill.addEventListener('click', function() {
+                const table = pill.dataset.table;
+                const status = pill.dataset.status;
+
+                // Update active state for this table's filter group
+                document.querySelectorAll(`.filter-pill[data-table="${table}"]`).forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+
+                // Update state and re-render
+                if (table === 'cases') {
+                    casesFilter = status;
+                    renderCases();
+                } else if (table === 'bookings') {
+                    bookingsFilter = status;
+                    renderBookings();
+                }
+            });
+        });
+
+        // ============================================================
+        // REFRESH BUTTONS
+        // ============================================================
+        document.querySelectorAll('[data-refresh]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const target = btn.dataset.refresh;
+                if (target === 'cases') loadCases();
+                else if (target === 'bookings') loadBookings();
+            });
+        });
+
+        // ============================================================
+        // CASES: LOAD & RENDER
+        // ============================================================
         async function loadCases() {
             if (!supabase) {
-                showError('ไม่สามารถเชื่อมต่อ Supabase ได้ (ตรวจสอบว่าโหลด js/main.js สำเร็จ)');
+                showError('casesError', 'ไม่สามารถเชื่อมต่อ Supabase ได้');
                 return;
             }
-            
-            loadingState.classList.remove('hidden');
-            tableWrap.classList.add('hidden');
-            emptyState.classList.add('hidden');
-            errorState.classList.add('hidden');
 
-            // ดึงข้อมูลจากตาราง cases
+            const loading = document.getElementById('casesLoading');
+            const tableWrap = document.getElementById('casesTableWrap');
+            const empty = document.getElementById('casesEmpty');
+            const errorEl = document.getElementById('casesError');
+
+            loading.classList.remove('hidden');
+            tableWrap.classList.add('hidden');
+            empty.classList.add('hidden');
+            errorEl.classList.add('hidden');
+
             const { data, error } = await supabase
                 .from('cases')
                 .select(`
@@ -233,178 +423,60 @@
                 `)
                 .order('created_at', { ascending: false });
 
-            loadingState.classList.add('hidden');
+            loading.classList.add('hidden');
 
             if (error) {
-                showError('โหลดข้อมูลไม่สำเร็จ: ' + error.message);
+                showError('casesError', 'โหลดข้อมูลไม่สำเร็จ: ' + error.message);
                 return;
             }
 
             allCases = data || [];
-            render();
+            document.getElementById('casesCount').textContent = allCases.length;
+            renderCases();
         }
 
-        function showError(msg) {
-            errorState.textContent = '⚠️ ' + msg;
-            errorState.classList.remove('hidden');
-        }
-
-        // ============================================================
-        // 🔴 FIX 1: ปรับการ Filter ให้รวม new_lead_b2c และ new_lead_b2b
-        // ============================================================
-        function render() {
-            const filtered = currentFilter === 'all'
+        function renderCases() {
+            const filtered = casesFilter === 'all'
                 ? allCases
                 : allCases.filter(c => {
-                    // ถ้ากรอง "ใหม่" ให้รวมทุกสถานะที่เป็น Lead ใหม่
-                    if (currentFilter === 'new') {
+                    if (casesFilter === 'new') {
                         return c.status === 'new' || 
                                c.status === 'new_lead_b2c' || 
                                c.status === 'new_lead_b2b';
                     }
-                    return c.status === currentFilter;
+                    return c.status === casesFilter;
                 });
 
-            totalCount.textContent = `ทั้งหมด ${allCases.length} รายการ · แสดง ${filtered.length} รายการ`;
+            const totalEl = document.getElementById('casesTotalCount');
+            totalEl.textContent = `ทั้งหมด ${allCases.length} รายการ · แสดง ${filtered.length} รายการ`;
+
+            const tableWrap = document.getElementById('casesTableWrap');
+            const empty = document.getElementById('casesEmpty');
 
             if (filtered.length === 0) {
                 tableWrap.classList.add('hidden');
-                emptyState.classList.remove('hidden');
+                empty.classList.remove('hidden');
                 return;
             }
-            emptyState.classList.add('hidden');
-            tableWrap.classList.remove('hidden');
-            casesBody.innerHTML = filtered.map(rowHtml).join('');
 
-            casesBody.querySelectorAll('.status-select').forEach(function(sel) {
+            empty.classList.add('hidden');
+            tableWrap.classList.remove('hidden');
+
+            const body = document.getElementById('casesBody');
+            body.innerHTML = filtered.map(casesRowHtml).join('');
+
+            body.querySelectorAll('.status-select').forEach(function(sel) {
                 sel.addEventListener('change', function() {
-                    updateStatus(sel.dataset.id, sel.value, sel);
+                    updateCaseStatus(sel.dataset.id, sel.value, sel);
                 });
             });
         }
 
-        // ============================================================
-        // 🔴 FIX 2: ปรับการแปลงวันที่ให้ป้องกัน Invalid Date
-        // ============================================================
-        function formatTravelDate(dateStr) {
-            if (!dateStr) return '-';
-            
-            // ถ้าเป็นรูปแบบ ISO (YYYY-MM-DD) ให้แปลงเป็นวันที่ไทย
-            const parsedDate = new Date(dateStr);
-            if (!isNaN(parsedDate)) {
-                return parsedDate.toLocaleDateString('th-TH', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-            }
-            
-            // ถ้าแปลงไม่ได้ ให้แสดงค่าเดิม
-            return dateStr;
-        }
-
-        // ============================================================
-        // 🔴 FIX 3: ปรับ getServiceTypeLabel ให้อ่านค่าที่ขึ้นต้นได้ยืดหยุ่น
-        // ============================================================
-        function getServiceTypeLabel(type) {
-            if (!type) return '-';
-            
-            // แปลงเป็นตัวเล็กเพื่อตรวจสอบแบบ case-insensitive
-            const lowerType = type.toLowerCase();
-            
-            // ตรวจสอบคำสำคัญในข้อความ
-            if (lowerType.includes('consultation') || 
-                lowerType.includes('treatment') || 
-                lowerType.includes('medical') ||
-                lowerType.includes('การแพทย์') ||
-                lowerType.includes('รักษา')) {
-                return '🏥 การแพทย์ / รักษา';
-            }
-            
-            if (lowerType.includes('checkup') || lowerType.includes('ตรวจสุขภาพ')) {
-                return '💉 ตรวจสุขภาพ';
-            }
-            
-            if (lowerType.includes('wellness') || 
-                lowerType.includes('aesthetic') ||
-                lowerType.includes('ความงาม') ||
-                lowerType.includes('สปา')) {
-                return '✨ ความงาม / สปา';
-            }
-            
-            if (lowerType.includes('b2b') || 
-                lowerType.includes('clinic') || 
-                lowerType.includes('hospital') ||
-                lowerType.includes('โรงพยาบาล') ||
-                lowerType.includes('hotel') ||
-                lowerType.includes('โรงแรม')) {
-                return '🤝 พันธมิตร B2B';
-            }
-            
-            if (lowerType.includes('transport') || 
-                lowerType.includes('ขนส่ง') ||
-                lowerType.includes('รถรับส่ง')) {
-                return '🚗 ขนส่ง / รถรับส่ง';
-            }
-            
-            if (lowerType.includes('travel') || 
-                lowerType.includes('ท่องเที่ยว') ||
-                lowerType.includes('ทัศนศึกษา')) {
-                return '✈️ ท่องเที่ยว';
-            }
-            
-            // ถ้าไม่ตรงเงื่อนไข ให้แสดงข้อความจริงออกมาตรงๆ
-            return type;
-        }
-
-        function getServiceTypeClass(type) {
-            if (!type) return 'other';
-            
-            const lowerType = type.toLowerCase();
-            
-            if (lowerType.includes('consultation') || 
-                lowerType.includes('treatment') || 
-                lowerType.includes('medical') ||
-                lowerType.includes('การแพทย์')) {
-                return 'medical';
-            }
-            
-            if (lowerType.includes('wellness') || 
-                lowerType.includes('aesthetic') ||
-                lowerType.includes('ความงาม')) {
-                return 'wellness';
-            }
-            
-            if (lowerType.includes('b2b') || 
-                lowerType.includes('clinic') || 
-                lowerType.includes('hospital') ||
-                lowerType.includes('hotel')) {
-                return 'b2b';
-            }
-            
-            if (lowerType.includes('transport') || 
-                lowerType.includes('ขนส่ง')) {
-                return 'transport';
-            }
-            
-            if (lowerType.includes('travel') || 
-                lowerType.includes('ท่องเที่ยว')) {
-                return 'travel';
-            }
-            
-            return 'other';
-        }
-
-        // ============================================================
-        // 🔴 FIX 4: ปรับ <select> ให้รองรับ new_lead_b2c และ new_lead_b2b
-        // ============================================================
-        function rowHtml(c) {
+        function casesRowHtml(c) {
             const createdAt = c.created_at ? new Date(c.created_at).toLocaleString('th-TH') : '-';
             const travelDisplay = formatTravelDate(c.travel_date) + (c.travel_time ? ' ' + c.travel_time : '');
-
-            // ตรวจสอบสถานะเพื่อเลือก option ที่ถูกต้อง
             const status = c.status || 'new_lead_b2c';
-            
+
             return `
                 <tr class="admin-row border-b border-slate-50 align-top">
                     <td class="py-3 px-4 whitespace-nowrap">
@@ -422,12 +494,8 @@
                             ${getServiceTypeLabel(c.service_type)}
                         </span>
                     </td>
-                    <td class="py-3 px-4 text-slate-600">
-                        ${escapeHtml(c.hospital || '-')}
-                    </td>
-                    <td class="py-3 px-4 text-slate-600 text-xs whitespace-nowrap">
-                        ${travelDisplay}
-                    </td>
+                    <td class="py-3 px-4 text-slate-600">${escapeHtml(c.hospital || '-')}</td>
+                    <td class="py-3 px-4 text-slate-600 text-xs whitespace-nowrap">${travelDisplay}</td>
                     <td class="py-3 px-4 text-slate-600 text-xs max-w-[150px] truncate" title="${escapeHtml(c.message || '')}">
                         ${escapeHtml(c.message ? c.message.substring(0, 50) + (c.message.length > 50 ? '...' : '') : '-')}
                     </td>
@@ -444,7 +512,7 @@
             `;
         }
 
-        async function updateStatus(id, newStatus, selectEl) {
+        async function updateCaseStatus(id, newStatus, selectEl) {
             selectEl.disabled = true;
             const { error } = await supabase
                 .from('cases')
@@ -461,6 +529,208 @@
             if (c) c.status = newStatus;
         }
 
+        // ============================================================
+        // BOOKINGS: LOAD & RENDER
+        // ============================================================
+        async function loadBookings() {
+            if (!supabase) {
+                showError('bookingsError', 'ไม่สามารถเชื่อมต่อ Supabase ได้');
+                return;
+            }
+
+            const loading = document.getElementById('bookingsLoading');
+            const tableWrap = document.getElementById('bookingsTableWrap');
+            const empty = document.getElementById('bookingsEmpty');
+            const errorEl = document.getElementById('bookingsError');
+
+            loading.classList.remove('hidden');
+            tableWrap.classList.add('hidden');
+            empty.classList.add('hidden');
+            errorEl.classList.add('hidden');
+
+            const { data, error } = await supabase
+                .from('bookings')
+                .select(`
+                    id, customer_name, customer_phone, customer_line, country,
+                    booking_date, booking_time, need_transport, need_hotel,
+                    attachment_url, status, created_at,
+                    packages ( title, partners ( name ) )
+                `)
+                .order('created_at', { ascending: false });
+
+            loading.classList.add('hidden');
+
+            if (error) {
+                showError('bookingsError', 'โหลดข้อมูลไม่สำเร็จ: ' + error.message);
+                return;
+            }
+
+            allBookings = data || [];
+            document.getElementById('bookingsCount').textContent = allBookings.length;
+            renderBookings();
+        }
+
+        function renderBookings() {
+            const filtered = bookingsFilter === 'all'
+                ? allBookings
+                : allBookings.filter(b => b.status === bookingsFilter);
+
+            const totalEl = document.getElementById('bookingsTotalCount');
+            totalEl.textContent = `ทั้งหมด ${allBookings.length} รายการ · แสดง ${filtered.length} รายการ`;
+
+            const tableWrap = document.getElementById('bookingsTableWrap');
+            const empty = document.getElementById('bookingsEmpty');
+
+            if (filtered.length === 0) {
+                tableWrap.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            tableWrap.classList.remove('hidden');
+
+            const body = document.getElementById('bookingsBody');
+            body.innerHTML = filtered.map(bookingsRowHtml).join('');
+
+            body.querySelectorAll('.status-select').forEach(function(sel) {
+                sel.addEventListener('change', function() {
+                    updateBookingStatus(sel.dataset.id, sel.value, sel);
+                });
+            });
+        }
+
+        function bookingsRowHtml(b) {
+            const pkgTitle = b.packages ? b.packages.title : '-';
+            const partnerName = (b.packages && b.packages.partners) ? b.packages.partners.name : '-';
+            const extras = [
+                b.need_transport ? '🚗 รถรับส่ง' : null,
+                b.need_hotel ? '🏨 โรงแรม' : null
+            ].filter(Boolean).join(' · ') || '-';
+            const createdAt = b.created_at ? new Date(b.created_at).toLocaleString('th-TH') : '-';
+
+            return `
+                <tr class="admin-row border-b border-slate-50 align-top">
+                    <td class="py-3 px-4 whitespace-nowrap">
+                        <div class="font-medium text-slate-800">${escapeHtml(b.booking_date || '-')}</div>
+                        <div class="text-slate-500 text-xs">${escapeHtml(b.booking_time || '-')}</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-slate-800">${escapeHtml(b.customer_name)}</div>
+                        <div class="text-slate-500 text-xs">${escapeHtml(b.country || '-')}</div>
+                    </td>
+                    <td class="py-3 px-4 text-slate-600">
+                        <div>${escapeHtml(b.customer_phone)}</div>
+                        ${b.customer_line ? `<div class="text-xs text-slate-400">LINE: ${escapeHtml(b.customer_line)}</div>` : ''}
+                        ${b.attachment_url ? `<a href="${escapeAttr(b.attachment_url)}" target="_blank" rel="noopener" class="text-xs text-primary hover:underline">📎 ไฟล์แนบ</a>` : ''}
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-slate-800">${escapeHtml(pkgTitle)}</div>
+                        <div class="text-slate-500 text-xs">${escapeHtml(partnerName)}</div>
+                    </td>
+                    <td class="py-3 px-4 text-slate-600 text-xs">${extras}</td>
+                    <td class="py-3 px-4 text-slate-500 text-xs whitespace-nowrap">${createdAt}</td>
+                    <td class="py-3 px-4">
+                        <select class="status-select status-${escapeAttr(b.status)}" data-id="${escapeAttr(b.id)}">
+                            <option value="pending" ${b.status === 'pending' ? 'selected' : ''}>⏳ รอดำเนินการ</option>
+                            <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>✅ ยืนยันแล้ว</option>
+                            <option value="cancelled" ${b.status === 'cancelled' ? 'selected' : ''}>❌ ยกเลิก</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+        }
+
+        async function updateBookingStatus(id, newStatus, selectEl) {
+            selectEl.disabled = true;
+            const { error } = await supabase
+                .from('bookings')
+                .update({ status: newStatus })
+                .eq('id', id);
+            selectEl.disabled = false;
+
+            if (error) {
+                alert('อัปเดตสถานะไม่สำเร็จ: ' + error.message);
+                return;
+            }
+            selectEl.className = 'status-select status-' + newStatus;
+            const b = allBookings.find(x => x.id === id);
+            if (b) b.status = newStatus;
+        }
+
+        // ============================================================
+        // HELPER FUNCTIONS
+        // ============================================================
+        function showError(elId, msg) {
+            const el = document.getElementById(elId);
+            el.textContent = '⚠️ ' + msg;
+            el.classList.remove('hidden');
+        }
+
+        function formatTravelDate(dateStr) {
+            if (!dateStr) return '-';
+            const parsedDate = new Date(dateStr);
+            if (!isNaN(parsedDate)) {
+                return parsedDate.toLocaleDateString('th-TH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+            return dateStr;
+        }
+
+        function getServiceTypeLabel(type) {
+            if (!type) return '-';
+            const lowerType = type.toLowerCase();
+
+            if (lowerType.includes('consultation') || lowerType.includes('treatment') || 
+                lowerType.includes('medical') || lowerType.includes('การแพทย์') || lowerType.includes('รักษา')) {
+                return '🏥 การแพทย์ / รักษา';
+            }
+            if (lowerType.includes('checkup') || lowerType.includes('ตรวจสุขภาพ')) {
+                return '💉 ตรวจสุขภาพ';
+            }
+            if (lowerType.includes('wellness') || lowerType.includes('aesthetic') || 
+                lowerType.includes('ความงาม') || lowerType.includes('สปา')) {
+                return '✨ ความงาม / สปา';
+            }
+            if (lowerType.includes('b2b') || lowerType.includes('clinic') || lowerType.includes('hospital') ||
+                lowerType.includes('โรงพยาบาล') || lowerType.includes('hotel') || lowerType.includes('โรงแรม')) {
+                return '🤝 พันธมิตร B2B';
+            }
+            if (lowerType.includes('transport') || lowerType.includes('ขนส่ง') || lowerType.includes('รถรับส่ง')) {
+                return '🚗 ขนส่ง / รถรับส่ง';
+            }
+            if (lowerType.includes('travel') || lowerType.includes('ท่องเที่ยว') || lowerType.includes('ทัศนศึกษา')) {
+                return '✈️ ท่องเที่ยว';
+            }
+            return type;
+        }
+
+        function getServiceTypeClass(type) {
+            if (!type) return 'other';
+            const lowerType = type.toLowerCase();
+
+            if (lowerType.includes('consultation') || lowerType.includes('treatment') || 
+                lowerType.includes('medical') || lowerType.includes('การแพทย์')) {
+                return 'medical';
+            }
+            if (lowerType.includes('wellness') || lowerType.includes('aesthetic') || lowerType.includes('ความงาม')) {
+                return 'wellness';
+            }
+            if (lowerType.includes('b2b') || lowerType.includes('clinic') || lowerType.includes('hospital') || lowerType.includes('hotel')) {
+                return 'b2b';
+            }
+            if (lowerType.includes('transport') || lowerType.includes('ขนส่ง')) {
+                return 'transport';
+            }
+            if (lowerType.includes('travel') || lowerType.includes('ท่องเที่ยว')) {
+                return 'travel';
+            }
+            return 'other';
+        }
+
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/[&<>"']/g, function(c) {
@@ -468,6 +738,7 @@
             });
         }
         function escapeAttr(str) { return escapeHtml(str); }
+
     })();
     </script>
 </body>

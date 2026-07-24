@@ -35,36 +35,42 @@
         {
             slug: 'hospital',
             icon: '🏥',
+            image: 'images/hospital.webp',
             dbCategories: ['Hospital'],
             label: { th: 'โรงพยาบาล', lo: 'ໂຮງໝໍ', en: 'Hospitals' }
         },
         {
             slug: 'clinic',
             icon: '🩺',
+            image: 'images/clinic.webp',
             dbCategories: ['Clinic'],
             label: { th: 'คลินิก & ความงาม', lo: 'ຄລີນິກ & ຄວາມງາມ', en: 'Clinics & Aesthetics' }
         },
         {
             slug: 'dental',
             icon: '🦷',
+            image: 'images/dental.webp',
             dbCategories: ['Dental'],
             label: { th: 'ทันตกรรม', lo: 'ທັນຕະກຳ', en: 'Dental' }
         },
         {
             slug: 'wellness',
             icon: '🌿',
+            image: 'images/wellness.webp',
             dbCategories: ['Wellness'],
             label: { th: 'เวลเนส & แพทย์ทางเลือก', lo: 'ສຸຂະພາບ & ແພດທາງເລືອກ', en: 'Wellness & Alternative Medicine' }
         },
         {
             slug: 'spa',
             icon: '💆',
+            image: null, // TODO: no dedicated photo yet — swap in a spa image when available
             dbCategories: ['Spa'],
             label: { th: 'สปา & ผ่อนคลาย', lo: 'ສະປາ & ພັກຜ່ອນ', en: 'Spa & Relaxation' }
         },
         {
             slug: 'hotel_transport',
             icon: '🏨',
+            image: 'images/hotel-transport.webp', // vip-transport.webp also available in /images if you'd rather lead with the car
             dbCategories: ['Hotel', 'Transport'],
             label: { th: 'โรงแรม & รถรับส่ง', lo: 'ໂຮງແຮມ & ລົດຮັບສົ່ງ', en: 'Hotels & Transport' }
         }

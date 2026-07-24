@@ -1,5 +1,5 @@
 // ============================================================
-// 🧠 MAIN.JS — Shared Utilities for WOS Platform
+// 🧠 MAIN.JS — Shared Utilities for WOS B2C Platform
 // ============================================================
 
 (function() {
@@ -29,6 +29,118 @@
     window.__supabase = supabase;
 
     // ============================================================
+    // 🗂️ CATEGORY METADATA (Home page 6 cards -> DB category values)
+    // ============================================================
+    window.WOS_CATEGORIES = [
+        {
+            slug: 'hospital',
+            icon: '🏥',
+            dbCategories: ['Hospital'],
+            label: { th: 'โรงพยาบาล', lo: 'ໂຮງໝໍ', en: 'Hospitals' }
+        },
+        {
+            slug: 'clinic',
+            icon: '🩺',
+            dbCategories: ['Clinic'],
+            label: { th: 'คลินิก & ความงาม', lo: 'ຄລີນິກ & ຄວາມງາມ', en: 'Clinics & Aesthetics' }
+        },
+        {
+            slug: 'dental',
+            icon: '🦷',
+            dbCategories: ['Dental'],
+            label: { th: 'ทันตกรรม', lo: 'ທັນຕະກຳ', en: 'Dental' }
+        },
+        {
+            slug: 'wellness',
+            icon: '🌿',
+            dbCategories: ['Wellness'],
+            label: { th: 'เวลเนส & แพทย์ทางเลือก', lo: 'ສຸຂະພາບ & ແພດທາງເລືອກ', en: 'Wellness & Alternative Medicine' }
+        },
+        {
+            slug: 'spa',
+            icon: '💆',
+            dbCategories: ['Spa'],
+            label: { th: 'สปา & ผ่อนคลาย', lo: 'ສະປາ & ພັກຜ່ອນ', en: 'Spa & Relaxation' }
+        },
+        {
+            slug: 'hotel_transport',
+            icon: '🏨',
+            dbCategories: ['Hotel', 'Transport'],
+            label: { th: 'โรงแรม & รถรับส่ง', lo: 'ໂຮງແຮມ & ລົດຮັບສົ່ງ', en: 'Hotels & Transport' }
+        }
+    ];
+
+    window.getCategoryBySlug = function(slug) {
+        return window.WOS_CATEGORIES.find(c => c.slug === slug) || null;
+    };
+
+    // ============================================================
+    // 📡 DATA LAYER: Partners / Packages / Bookings
+    // ============================================================
+
+    // Fetch active partners, optionally filtered by one or more DB category values
+    window.fetchPartners = async function(dbCategories) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        let query = window.__supabase.from('partners').select('*').eq('status', 'active');
+        if (dbCategories && dbCategories.length > 0) {
+            query = query.in('category', dbCategories);
+        }
+        const { data, error } = await query.order('rating', { ascending: false });
+        if (error) throw error;
+        return data;
+    };
+
+    // Fetch a single partner by id
+    window.fetchPartnerById = async function(id) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        const { data, error } = await window.__supabase.from('partners').select('*').eq('id', id).single();
+        if (error) throw error;
+        return data;
+    };
+
+    // Fetch packages for a given partner (optionally only promotions)
+    window.fetchPackagesByPartner = async function(partnerId, promotionsOnly) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        let query = window.__supabase.from('packages').select('*').eq('partner_id', partnerId);
+        if (promotionsOnly) query = query.eq('is_promotion', true);
+        const { data, error } = await query.order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    };
+
+    // Fetch a single package by id (with its parent partner joined)
+    window.fetchPackageById = async function(id) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        const { data, error } = await window.__supabase
+            .from('packages')
+            .select('*, partners(*)')
+            .eq('id', id)
+            .single();
+        if (error) throw error;
+        return data;
+    };
+
+    // Upload a booking attachment file to Supabase Storage, returns public URL
+    window.uploadBookingAttachment = async function(file) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        const path = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await window.__supabase.storage
+            .from('booking-attachments')
+            .upload(path, file);
+        if (uploadError) throw uploadError;
+        const { data } = window.__supabase.storage.from('booking-attachments').getPublicUrl(path);
+        return data.publicUrl;
+    };
+
+    // Submit a new booking
+    window.submitBooking = async function(payload) {
+        if (!window.__supabase) throw new Error('Supabase client is not initialized');
+        const { data, error } = await window.__supabase.from('bookings').insert([payload]).select();
+        if (error) throw error;
+        return data;
+    };
+
+    // ============================================================
     // 📋 FORM HELPER: Show status message
     // ============================================================
     window.showFormStatus = function(element, message, type) {
@@ -39,18 +151,6 @@
              type === 'error' ? 'text-red-700 bg-red-50' :
              'text-amber-700 bg-amber-50');
         element.classList.remove('hidden');
-    };
-
-    // ============================================================
-    // 📤 SUBMIT HELPER: Insert case into Supabase
-    // ============================================================
-    window.submitWosCase = async function(payload) {
-        if (!window.__supabase) {
-            throw new Error('Supabase client is not initialized');
-        }
-        const { data, error } = await window.__supabase.from('cases').insert([payload]);
-        if (error) throw error;
-        return data;
     };
 
     // ============================================================
@@ -100,6 +200,11 @@
         setLanguage(savedLang);
     };
 
+    // Returns the currently active language code ('th' | 'lo' | 'en')
+    window.getCurrentLang = function() {
+        try { return localStorage.getItem('wos-lang') || 'th'; } catch (e) { return 'th'; }
+    };
+
     // ============================================================
     // 📅 DATE INPUT: Set min to today (dynamic, never goes stale)
     // ============================================================
@@ -108,6 +213,21 @@
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
             input.min = today;
         });
+    };
+
+    // ============================================================
+    // 🔗 URL QUERY HELPER
+    // ============================================================
+    window.getQueryParam = function(key) {
+        return new URLSearchParams(window.location.search).get(key);
+    };
+
+    // ============================================================
+    // 💰 CURRENCY FORMAT HELPER
+    // ============================================================
+    window.formatTHB = function(amount) {
+        if (amount === null || amount === undefined) return '-';
+        return Number(amount).toLocaleString('th-TH') + ' บาท';
     };
 
     // ============================================================

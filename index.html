@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>WOS — Healthcare Hospitality OS</title>
+    <meta name="description" content="WOS เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว" />
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/style.css" />
+    
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- ===== TOP ANNOUNCEMENT BAR ===== -->
+    <!-- ============================================================ -->
+    <div class="announcement-bar" id="announcementBar">
+        <span>
+            🔬 <span class="lang-content active" data-lang="th">ระบบรายงานผู้ป่วยออนไลน์ — เข้าถึงผลตรวจและประวัติการรักษาของคุณได้ทุกที่ทุกเวลา</span>
+            <span class="lang-content" data-lang="lo">ລະບົບລາຍງານຄົນເຈັບອອນລາຍ — ເຂົ້າເຖິງຜົນກວດ ແລະ ປະຫວັດການຮັກສາຂອງທ່ານໄດ້ທຸກທີ່ທຸກເວລາ</span>
+            <span class="lang-content" data-lang="en">🔬 Access Your Clinical Reports — View test results and medical records anytime, anywhere</span>
+        </span>
+        <button class="close-btn" onclick="document.getElementById('announcementBar').style.display='none'" aria-label="ปิดประกาศ">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== HEADER ===== -->
+    <!-- ============================================================ -->
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+                WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#why" class="hover:text-primary transition">Why WOS</a>
+                <a href="services.html" class="hover:text-primary transition">Services</a>
+                <a href="#ecosystem" class="hover:text-primary transition">Ecosystem</a>
+                <a href="#contact" class="hover:text-primary transition">Contact</a>
+            </nav>
+
+            <!-- Right: Lang Switcher + CTA -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
+                    <button class="lang-btn active" data-lang="th">TH</button>
+                    <button class="lang-btn" data-lang="lo">ລາວ</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                </div>
+                <a href="services.html" class="hidden sm:inline-block bg-primary hover:bg-primary-dark text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition">
+                    <span class="lang-content active" data-lang="th">เริ่มต้นใช้งาน</span>
+                    <span class="lang-content" data-lang="lo">ເລີ່ມຕົ້ນ</span>
+                    <span class="lang-content" data-lang="en">Get Started</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- ===== HERO SECTION ===== -->
+    <!-- ============================================================ -->
+    <section class="relative bg-gradient-to-br from-primary-light via-white to-amber-50/30 overflow-hidden section-padding">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="space-y-6">
+                    <span class="inline-block bg-primary/10 text-primary text-xs px-4 py-1.5 rounded-full font-semibold uppercase tracking-wider">
+                        <span class="lang-content active" data-lang="th">Healthcare Hospitality OS</span>
+                        <span class="lang-content" data-lang="lo">ລະບົບປະຕິບັດການດູແລສຸຂະພາບ</span>
+                        <span class="lang-content" data-lang="en">Healthcare Hospitality OS</span>
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1]">
+                        <span class="lang-content active" data-lang="th">ระบบปฏิบัติการเพื่อ<br/>การดูแลสุขภาพ</span>
+                        <span class="lang-content" data-lang="lo">ລະບົບປະຕິບັດການເພື່ອ<br/>ການດູແລສຸຂະພາບ</span>
+                        <span class="lang-content" data-lang="en">The Operating System<br/>for Healthcare</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-lg">
+                        <span class="lang-content active" data-lang="th">เชื่อมโรงพยาบาล โรงแรม และการเดินทาง ในระบบเดียว สำหรับผู้ป่วยข้ามพรมแดนไทย-ลาว</span>
+                        <span class="lang-content" data-lang="lo">ເຊື່ອມໂຮງໝໍ ໂຮງແຮມ ແລະ ການເດີນທາງ ໄວ້ໃນລະບົບດຽວ ສຳລັບຄົນເຈັບຂ້າມແດນ ລາວ-ໄທ</span>
+                        <span class="lang-content" data-lang="en">Connecting hospitals, hotels, and travel in one seamless system for cross-border patients (Laos → Thailand)</span>
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="services.html" class="btn-primary">
+                            <span class="lang-content active" data-lang="th">👤 ปรึกษาแพทย์ / จองคิว</span>
+                            <span class="lang-content" data-lang="lo">👤 ປຶກສາໝໍ / ຈອງຄິວ</span>
+                            <span class="lang-content" data-lang="en">👤 Consult / Book</span>
+                        </a>
+                        <a href="partner.html" class="btn-outline-primary">
+                            <span class="lang-content active" data-lang="th">🤝 สำหรับพันธมิตร</span>
+                            <span class="lang-content" data-lang="lo">🤝 ສຳລັບຄູ່ຮ່ວມງານ</span>
+                            <span class="lang-content" data-lang="en">🤝 For Partners</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Hero Photo -->
+                <div class="rounded-3xl overflow-hidden card-shadow border border-slate-100/50 shadow-xl">
+                    <img
+                        src="images/hero/hero-main.webp"
+                        alt="ผู้ป่วยได้รับการต้อนรับอย่างอบอุ่นจากทีมแพทย์ WOS"
+                        class="w-full h-full object-cover aspect-[4/3]"
+                        loading="lazy"
+                    />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== QUICK ACTION GRID ===== -->
+    <!-- ============================================================ -->
+    <section class="py-8 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="quick-action-grid">
+                <a href="services.html#categories" class="quick-action-card">
+                    <span class="icon">🩺</span>
+                    <div class="title">
+                        <span class="lang-content active" data-lang="th">ค้นหาแพทย์</span>
+                        <span class="lang-content" data-lang="lo">ຊອກຫາແພດ</span>
+                        <span class="lang-content" data-lang="en">Find a Doctor</span>
+                    </div>
+                    <div class="label">
+                        <span class="lang-content active" data-lang="th">ผู้เชี่ยวชาญทุกสาขา</span>
+                        <span class="lang-content" data-lang="lo">ຊ່ຽວຊານທຸກສາຂາ</span>
+                        <span class="lang-content" data-lang="en">All Specialties</span>
+                    </div>
+                </a>
+                <a href="services.html#booking" class="quick-action-card">
+                    <span class="icon">💬</span>
+                    <div class="title">
+                        <span class="lang-content active" data-lang="th">ส่งคำถามปรึกษา</span>
+                        <span class="lang-content" data-lang="lo">ສົ່ງຄຳຖາມປຶກສາ</span>
+                        <span class="lang-content" data-lang="en">Send an Inquiry</span>
+                    </div>
+                    <div class="label">
+                        <span class="lang-content active" data-lang="th">ทีมงานตอบกลับไว</span>
+                        <span class="lang-content" data-lang="lo">ທີມງານຕອບກັບໄວ</span>
+                        <span class="lang-content" data-lang="en">Quick Response</span>
+                    </div>
+                </a>
+                <a href="patients.html" class="quick-action-card">
+                    <span class="icon">📅</span>
+                    <div class="title">
+                        <span class="lang-content active" data-lang="th">จองคิวรักษา</span>
+                        <span class="lang-content" data-lang="lo">ຈອງຄິວຮັກສາ</span>
+                        <span class="lang-content" data-lang="en">Book Appointment</span>
+                    </div>
+                    <div class="label">
+                        <span class="lang-content active" data-lang="th">เลือกวันเวลาที่สะดวก</span>
+                        <span class="lang-content" data-lang="lo">ເລືອກວັນເວລາທີ່ສະດວກ</span>
+                        <span class="lang-content" data-lang="en">Choose Your Schedule</span>
+                    </div>
+                </a>
+                <a href="services.html#cross-border" class="quick-action-card">
+                    <span class="icon">🌏</span>
+                    <div class="title">
+                        <span class="lang-content active" data-lang="th">WOS Anywhere</span>
+                        <span class="lang-content" data-lang="lo">WOS Anywhere</span>
+                        <span class="lang-content" data-lang="en">WOS Anywhere</span>
+                    </div>
+                    <div class="label">
+                        <span class="lang-content active" data-lang="th">บริการข้ามพรมแดน</span>
+                        <span class="lang-content" data-lang="lo">ບໍລິການຂ້າມແດນ</span>
+                        <span class="lang-content" data-lang="en">Cross-Border Care</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== WHY WOS ===== -->
+    <!-- ============================================================ -->
+    <section id="why" class="section-padding bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-primary font-semibold text-sm tracking-widest uppercase">Why WOS</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
+                    <span class="lang-content active" data-lang="th">เชื่อมต่อสิ่งที่ขาดหายไป</span>
+                    <span class="lang-content" data-lang="lo">ເຊື່ອມຕໍ່ສິ່ງທີ່ຂາດຫາຍໄປ</span>
+                    <span class="lang-content" data-lang="en">Connecting What's Missing</span>
+                </h2>
+                <p class="text-slate-500 mt-3">
+                    <span class="lang-content active" data-lang="th">ยกระดับการเดินทางมารักษาพยาบาลข้ามพรมแดนให้ไร้รอยต่อ</span>
+                    <span class="lang-content" data-lang="lo">ຍົກລະດັບການເດີນທາງມາຮັກສາພະຍາບານຂ້າມແດນໃຫ້ບໍ່ມີຮອຍຕໍ່</span>
+                    <span class="lang-content" data-lang="en">Elevating cross-border medical travel to be seamless</span>
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-slate-50 rounded-2xl overflow-hidden card-shadow border border-slate-100">
+                    <img src="images/services/doctor-consult.webp" alt="คลินิก & โรงพยาบาล WOS" class="w-full h-40 object-cover" loading="lazy" />
+                    <div class="p-6">
+                        <div class="w-12 h-12 rounded-xl bg-white text-primary flex items-center justify-center text-2xl mb-4 -mt-10 border-4 border-white shadow-md relative">🏥</div>
+                        <h3 class="text-lg font-bold text-slate-900">
+                            <span class="lang-content active" data-lang="th">คลินิก & โรงพยาบาล</span>
+                            <span class="lang-content" data-lang="lo">ໂຮງໝໍ & ຄລີນິກ</span>
+                            <span class="lang-content" data-lang="en">Clinics & Hospitals</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-content active" data-lang="th">นัดหมายแพทย์เฉพาะทางและโรงพยาบาลชั้นนำในไทย</span>
+                            <span class="lang-content" data-lang="lo">ນັດໝາຍແພດຊ່ຽວຊານ ແລະ ໂຮງໝໍຊັ້ນນຳໃນໄທ</span>
+                            <span class="lang-content" data-lang="en">Book appointments with specialists and top Thai hospitals</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 rounded-2xl overflow-hidden card-shadow border border-slate-100">
+                    <img src="images/services/hotel-partner.webp" alt="ที่พักพันธมิตร WOS" class="w-full h-40 object-cover" loading="lazy" />
+                    <div class="p-6">
+                        <div class="w-12 h-12 rounded-xl bg-white text-primary flex items-center justify-center text-2xl mb-4 -mt-10 border-4 border-white shadow-md relative">🏨</div>
+                        <h3 class="text-lg font-bold text-slate-900">
+                            <span class="lang-content active" data-lang="th">ที่พักพันธมิตร</span>
+                            <span class="lang-content" data-lang="lo">ທີ່ພັກຄູ່ຮ່ວມງານ</span>
+                            <span class="lang-content" data-lang="en">Partner Accommodations</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-content active" data-lang="th">โรงแรมสะอาด ปลอดภัย ใกล้สถานพยาบาล</span>
+                            <span class="lang-content" data-lang="lo">ໂຮງແຮມສະອາດ ປອດໄພ ໃກ້ສະຖານພະຍາບານ</span>
+                            <span class="lang-content" data-lang="en">Clean, safe hotels near medical facilities</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 rounded-2xl overflow-hidden card-shadow border border-slate-100">
+                    <img src="images/services/vip-transport.webp" alt="รถรับส่ง VIP WOS" class="w-full h-40 object-cover" loading="lazy" />
+                    <div class="p-6">
+                        <div class="w-12 h-12 rounded-xl bg-white text-primary flex items-center justify-center text-2xl mb-4 -mt-10 border-4 border-white shadow-md relative">🚗</div>
+                        <h3 class="text-lg font-bold text-slate-900">
+                            <span class="lang-content active" data-lang="th">รถรับ-ส่ง VIP</span>
+                            <span class="lang-content" data-lang="lo">ລົດຮັບ-ສົ່ງ VIP</span>
+                            <span class="lang-content" data-lang="en">VIP Transport</span>
+                        </h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            <span class="lang-content active" data-lang="th">รับส่งข้ามด่านและตลอดการรักษา</span>
+                            <span class="lang-content" data-lang="lo">ຮັບສົ່ງຂ້າມດ່ານ ແລະ ຕະຫຼອດການຮັກສາ</span>
+                            <span class="lang-content" data-lang="en">Cross-border and throughout your treatment journey</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== SERVICES SECTION ===== -->
+    <!-- ============================================================ -->
+    <section id="services" class="section-padding bg-primary-light/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-primary font-semibold text-sm tracking-widest uppercase">Services</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
+                    <span class="lang-content active" data-lang="th">บริการสำหรับผู้ป่วยข้ามพรมแดน</span>
+                    <span class="lang-content" data-lang="lo">ບໍລິການສຳລັບຄົນເຈັບຂ້າມແດນ</span>
+                    <span class="lang-content" data-lang="en">Services for Cross-Border Patients</span>
+                </h2>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow text-center border border-slate-100">
+                    <div class="h-40 w-full overflow-hidden bg-slate-100">
+                        <img src="images/services/doctor-consult.webp" alt="ปรึกษาแพทย์" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    <div class="p-4">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ปรึกษาแพทย์</span>
+                        <span class="lang-content" data-lang="lo">ປຶກສາແພດ</span>
+                        <span class="lang-content" data-lang="en">Doctor Consult</span>
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">แพทย์เฉพาะทางทุกสาขา</span>
+                        <span class="lang-content" data-lang="lo">ແພດຊ່ຽວຊານທຸກສາຂາ</span>
+                        <span class="lang-content" data-lang="en">All specialties</span>
+                    </p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow text-center border border-slate-100">
+                    <div class="h-40 w-full overflow-hidden bg-slate-100">
+                        <img src="images/services/health-checkup.webp" alt="ตรวจสุขภาพ" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    <div class="p-4">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ตรวจสุขภาพ</span>
+                        <span class="lang-content" data-lang="lo">ກວດສຸຂະພາບ</span>
+                        <span class="lang-content" data-lang="en">Health Checkup</span>
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">แพ็กเกจตรวจประจำปี</span>
+                        <span class="lang-content" data-lang="lo">ຊຸດກວດປະຈຳປີ</span>
+                        <span class="lang-content" data-lang="en">Annual checkup packages</span>
+                    </p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow text-center border border-slate-100">
+                    <div class="h-40 w-full overflow-hidden bg-slate-100">
+                        <img src="images/services/aesthetic-surgery.webp" alt="ศัลยกรรมความงาม" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    <div class="p-4">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ศัลยกรรมความงาม</span>
+                        <span class="lang-content" data-lang="lo">ຜ່າຕັດຄວາມງາມ</span>
+                        <span class="lang-content" data-lang="en">Aesthetic Surgery</span>
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">ทันตกรรมและความงาม</span>
+                        <span class="lang-content" data-lang="lo">ແຂ້ວ ແລະ ຄວາມງາມ</span>
+                        <span class="lang-content" data-lang="en">Dental & aesthetics</span>
+                    </p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow text-center border border-slate-100">
+                    <div class="h-40 w-full overflow-hidden bg-slate-100">
+                        <img src="images/services/personal-coordinator.webp" alt="ผู้ประสานงานส่วนตัว" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    <div class="p-4">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ผู้ประสานงานส่วนตัว</span>
+                        <span class="lang-content" data-lang="lo">ຜູ້ປະສານງານສ່ວນຕົວ</span>
+                        <span class="lang-content" data-lang="en">Personal Coordinator</span>
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-1">
+                        <span class="lang-content active" data-lang="th">ดูแลและช่วยเหลือตลอดทริป</span>
+                        <span class="lang-content" data-lang="lo">ດູແລ ແລະ ຊ່ວຍເຫຼືອຕະຫຼອດທຣິບ</span>
+                        <span class="lang-content" data-lang="en">Assistance throughout your trip</span>
+                    </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== ECOSYSTEM SECTION ===== -->
+    <!-- ============================================================ -->
+    <section id="ecosystem" class="section-padding bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <span class="text-primary font-semibold text-sm tracking-widest uppercase">Ecosystem</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
+                    <span class="lang-content active" data-lang="th">ระบบนิเวศครบวงจร</span>
+                    <span class="lang-content" data-lang="lo">ລະບົບນິເວດຄົບວົງຈອນ</span>
+                    <span class="lang-content" data-lang="en">Complete Ecosystem</span>
+                </h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-3xl mb-3">🏥</div>
+                    <h4 class="font-bold text-slate-900">Hospitals</h4>
+                    <p class="text-sm text-slate-500">โรงพยาบาลพันธมิตรกว่า 50 แห่ง</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-3xl mb-3">🏨</div>
+                    <h4 class="font-bold text-slate-900">Hotels</h4>
+                    <p class="text-sm text-slate-500">ที่พักคุณภาพใกล้โรงพยาบาล</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-3xl mb-3">🚗</div>
+                    <h4 class="font-bold text-slate-900">Transport</h4>
+                    <p class="text-sm text-slate-500">บริการรับส่ง VIP 24 ชม.</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 text-center border border-slate-100">
+                    <div class="text-3xl mb-3">💊</div>
+                    <h4 class="font-bold text-slate-900">Pharmacy</h4>
+                    <p class="text-sm text-slate-500">ร้านยาพันธมิตรจัดส่งถึงที่</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== CONTACT / FORM ===== -->
+    <!-- ============================================================ -->
+    <section id="contact" class="section-padding bg-slate-900 text-white">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6">
+            <div class="text-center space-y-2 mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold">
+                    <span class="lang-content active" data-lang="th">ลงทะเบียน / ประสานงาน</span>
+                    <span class="lang-content" data-lang="lo">ລົງທະບຽນ / ປະສານງານ</span>
+                    <span class="lang-content" data-lang="en">Register / Contact</span>
+                </h2>
+                <p class="text-slate-300 text-sm">
+                    <span class="lang-content active" data-lang="th">ทีมงานจะติดต่อกลับภายใน 2 ชั่วโมง</span>
+                    <span class="lang-content" data-lang="lo">ທີມງານຈະຕິດຕໍ່ກັບຄືນພາຍໃນ 2 ຊົ່ວໂມງ</span>
+                    <span class="lang-content" data-lang="en">Our team will respond within 2 hours</span>
+                </p>
+            </div>
+
+            <div class="bg-white text-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+                <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl mb-6">
+                    <button type="button" id="tabB2C" class="form-tab active py-2.5 rounded-lg text-sm font-semibold text-center transition bg-primary text-white">
+                        <span class="lang-content active" data-lang="th">👤 ผู้ป่วย (B2C)</span>
+                        <span class="lang-content" data-lang="lo">👤 ຄົນເຈັບ (B2C)</span>
+                        <span class="lang-content" data-lang="en">👤 Patient (B2C)</span>
+                    </button>
+                    <button type="button" id="tabB2B" class="form-tab py-2.5 rounded-lg text-sm font-semibold text-center transition text-slate-600">
+                        <span class="lang-content active" data-lang="th">🤝 พันธมิตร (B2B)</span>
+                        <span class="lang-content" data-lang="lo">🤝 ຄູ່ຮ່ວມງານ (B2B)</span>
+                        <span class="lang-content" data-lang="en">🤝 Partner (B2B)</span>
+                    </button>
+                </div>
+
+                <form id="wosForm" class="space-y-4" novalidate>
+                    <div>
+                        <label for="patientName" class="form-label">
+                            <span class="lang-content active" data-lang="th">ชื่อ-นามสกุล <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ຊື່-ນາມສະກຸນ <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Full Name <span class="text-red-500">*</span></span>
+                        </label>
+                        <input type="text" id="patientName" required class="form-input" placeholder="สมชาย ใจดี" />
+                    </div>
+                    <div>
+                        <label for="phoneNumber" class="form-label">
+                            <span class="lang-content active" data-lang="th">เบอร์โทร / WhatsApp <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="lo">ເບີໂທ / WhatsApp <span class="text-red-500">*</span></span>
+                            <span class="lang-content" data-lang="en">Phone / WhatsApp <span class="text-red-500">*</span></span>
+                        </label>
+                        <input type="tel" id="phoneNumber" required class="form-input" placeholder="+856 20 XXXXXXXX" />
+                    </div>
+
+                    <div id="b2cFields">
+                        <div>
+                            <label for="serviceType" class="form-label">
+                                <span class="lang-content active" data-lang="th">ประเภทบริการ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="lo">ປະເພດບໍລິການ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="en">Service Type <span class="text-red-500">*</span></span>
+                            </label>
+                            <select id="serviceType" class="form-input">
+                                <option value="consultation">Consultation</option>
+                                <option value="treatment">Treatment / Surgery</option>
+                                <option value="checkup">Health Checkup</option>
+                                <option value="wellness">Wellness / Aesthetics</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="hospital" class="form-label">
+                                <span class="lang-content active" data-lang="th">โรงพยาบาลที่สนใจ</span>
+                                <span class="lang-content" data-lang="lo">ໂຮງໝໍທີ່ສົນໃຈ</span>
+                                <span class="lang-content" data-lang="en">Preferred Hospital</span>
+                            </label>
+                            <select id="hospital" class="form-input">
+                                <option value="Bumrungrad International">Bumrungrad International</option>
+                                <option value="Bangkok Hospital Udon">Bangkok Hospital Udon</option>
+                                <option value="Aek Udon Hospital">Aek Udon Hospital</option>
+                                <option value="Vejthani Hospital (BKK)">Vejthani Hospital</option>
+                                <option value="Other">Other / Recommend me</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="preferredDate" class="form-label">
+                                <span class="lang-content active" data-lang="th">วันที่ต้องการเดินทาง</span>
+                                <span class="lang-content" data-lang="lo">ວັນທີ່ຕ້ອງການເດີນທາງ</span>
+                                <span class="lang-content" data-lang="en">Preferred Travel Date</span>
+                            </label>
+                            <input type="date" id="preferredDate" class="form-input" />
+                        </div>
+                    </div>
+
+                    <div id="b2bFields" class="hidden space-y-4">
+                        <div>
+                            <label for="companyName" class="form-label">
+                                <span class="lang-content active" data-lang="th">ชื่อสถานประกอบการ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="lo">ຊື່ສະຖານປະກອບການ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="en">Organization Name <span class="text-red-500">*</span></span>
+                            </label>
+                            <input type="text" id="companyName" class="form-input" placeholder="Vientiane Wellness Clinic" />
+                        </div>
+                        <div>
+                            <label for="partnerType" class="form-label">
+                                <span class="lang-content active" data-lang="th">ประเภทธุรกิจ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="lo">ປະເພດທຸລະກິດ <span class="text-red-500">*</span></span>
+                                <span class="lang-content" data-lang="en">Business Type <span class="text-red-500">*</span></span>
+                            </label>
+                            <select id="partnerType" class="form-input">
+                                <option value="clinic_hospital">Clinic / Hospital</option>
+                                <option value="hotel_resort">Hotel / Resort</option>
+                                <option value="transport_agent">Transport Provider</option>
+                                <option value="investor">Investor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="message" class="form-label">
+                            <span class="lang-content active" data-lang="th">รายละเอียดเพิ่มเติม</span>
+                            <span class="lang-content" data-lang="lo">ລາຍລະອຽດເພີ່ມເຕີມ</span>
+                            <span class="lang-content" data-lang="en">Additional Details</span>
+                        </label>
+                        <textarea id="message" rows="3" class="form-input" placeholder="Tell us more about your needs..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn-primary w-full justify-center text-base">
+                        <span id="submitBtnText">
+                            <span class="lang-content active" data-lang="th">ส่งข้อมูล</span>
+                            <span class="lang-content" data-lang="lo">ສົ່ງຂໍ້ມູນ</span>
+                            <span class="lang-content" data-lang="en">Submit</span>
+                        </span>
+                        <span id="loadingSpinner" class="hidden">⏳ กำลังบันทึก...</span>
+                    </button>
+                    <div id="formStatus" class="text-center text-sm font-medium hidden"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ===== FOOTER ===== -->
+    <!-- ============================================================ -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-900 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="text-white font-bold text-lg mb-2">WOS<span class="text-amber-500 font-light">.os</span></div>
+                    <p class="text-xs text-slate-500">
+                        <span class="lang-content active" data-lang="th">Healthcare Hospitality OS</span>
+                        <span class="lang-content" data-lang="lo">ລະບົບປະຕິບັດການດູແລສຸຂະພາບ</span>
+                        <span class="lang-content" data-lang="en">Healthcare Hospitality OS</span>
+                    </p>
+                    <div class="mt-3 flex gap-3">
+                        <a href="https://wa.me/message/BVJXBWDYR2UHN1" target="_blank" rel="noopener" class="text-slate-500 hover:text-white transition"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://line.me/ti/p/@vlf9996z" target="_blank" rel="noopener" class="text-slate-500 hover:text-white transition"><i class="fab fa-line"></i></a>
+                        <a href="#" class="text-slate-500 hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">บริการ</span>
+                        <span class="lang-content" data-lang="lo">ບໍລິການ</span>
+                        <span class="lang-content" data-lang="en">Services</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="services.html" class="hover:text-white transition">Consult</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Checkup</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Aesthetics</a></li>
+                        <li><a href="services.html" class="hover:text-white transition">Dental</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">พันธมิตร</span>
+                        <span class="lang-content" data-lang="lo">ຄູ່ຮ່ວມງານ</span>
+                        <span class="lang-content" data-lang="en">Partners</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="partner.html" class="hover:text-white transition">Join Network</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Investor</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Hospital</a></li>
+                        <li><a href="partner.html" class="hover:text-white transition">Hotel</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">ติดต่อ</span>
+                        <span class="lang-content" data-lang="lo">ຕິດຕໍ່</span>
+                        <span class="lang-content" data-lang="en">Contact</span>
+                    </div>
+                    <ul class="space-y-1 text-xs">
+                        <li><a href="tel:+66855907666" class="hover:text-white">โทร (ไทย): 085-590-7666</a></li>
+                        <li><a href="tel:+8562098724718" class="hover:text-white">โทร (ลาว): +856 20 9872 4718</a></li>
+                        <li><a href="https://line.me/ti/p/@vlf9996z" target="_blank" rel="noopener" class="hover:text-white">LINE OA: @vlf9996z</a></li>
+                        <li><a href="https://wa.me/message/BVJXBWDYR2UHN1" target="_blank" rel="noopener" class="hover:text-white">WhatsApp</a></li>
+                        <li><a href="mailto:hello@wos.asia" class="hover:text-white">hello@wos.asia</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-900 mt-8 pt-6 text-center text-xs text-slate-500">
+                <p>หจก. รอยัล บริตจ์ 99 · เลขที่ 211 หมู่ 3 ถ.มิตรภาพ ต.บ้านจั่น อ.เมือง อุดรธานี 41000 · ทะเบียนนิติบุคคล: 0413568000586</p>
+                <p class="mt-2">© 2026 WOS. All rights reserved. | 
+                <span class="lang-content active" data-lang="th">นโยบายความเป็นส่วนตัว</span>
+                <span class="lang-content" data-lang="lo">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</span>
+                <span class="lang-content" data-lang="en">Privacy Policy</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ============================================================ -->
+    <script src="js/main.js"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // 📝 FORM LOGIC
+            // ============================================================
+            const supabase = window.__supabase;
+            if (!supabase) {
+                console.warn('⚠️ Supabase client not available');
+            }
+
+            let currentMode = 'b2c';
+            const tabB2C = document.getElementById('tabB2C');
+            const tabB2B = document.getElementById('tabB2B');
+            const b2cFields = document.getElementById('b2cFields');
+            const b2bFields = document.getElementById('b2bFields');
+
+            function switchFormTab(mode) {
+                currentMode = mode;
+                if (mode === 'b2c') {
+                    tabB2C.className = 'form-tab active py-2.5 rounded-lg text-sm font-semibold text-center transition bg-primary text-white';
+                    tabB2B.className = 'form-tab py-2.5 rounded-lg text-sm font-semibold text-center transition text-slate-600';
+                    b2cFields.classList.remove('hidden');
+                    b2bFields.classList.add('hidden');
+                } else {
+                    tabB2B.className = 'form-tab active py-2.5 rounded-lg text-sm font-semibold text-center transition bg-primary text-white';
+                    tabB2C.className = 'form-tab py-2.5 rounded-lg text-sm font-semibold text-center transition text-slate-600';
+                    b2bFields.classList.remove('hidden');
+                    b2cFields.classList.add('hidden');
+                }
+            }
+
+            tabB2C.addEventListener('click', function() { switchFormTab('b2c'); });
+            tabB2B.addEventListener('click', function() { switchFormTab('b2b'); });
+
+            const form = document.getElementById('wosForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const formStatus = document.getElementById('formStatus');
+
+            function showFormStatus(message, type) {
+                formStatus.textContent = message;
+                formStatus.className = 'text-center text-sm font-medium mt-4 p-3 rounded-xl ' +
+                    (type === 'success' ? 'text-emerald-700 bg-emerald-50' :
+                     type === 'error' ? 'text-red-700 bg-red-50' :
+                     'text-amber-700 bg-amber-50');
+                formStatus.classList.remove('hidden');
+            }
+
+            function validateRequiredFields(fields) {
+                let isValid = true;
+                fields.forEach(field => {
+                    const el = document.getElementById(field.id);
+                    if (field.required && !el.value.trim()) {
+                        el.classList.add('error');
+                        isValid = false;
+                    } else {
+                        el.classList.remove('error');
+                    }
+                });
+                return isValid;
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.form-input.error').forEach(el => el.classList.remove('error'));
+
+                const name = document.getElementById('patientName').value.trim();
+                const phone = document.getElementById('phoneNumber').value.trim();
+
+                const commonFields = [
+                    { id: 'patientName', required: true },
+                    { id: 'phoneNumber', required: true }
+                ];
+
+                let isValid = validateRequiredFields(commonFields);
+                let payload = {};
+
+                if (currentMode === 'b2c') {
+                    const service = document.getElementById('serviceType').value;
+                    const hospital = document.getElementById('hospital').value;
+                    const travelDate = document.getElementById('preferredDate').value || null;
+                    payload = {
+                        patient_name: name,
+                        phone_number: phone,
+                        service_type: `[B2C] ${service}`,
+                        hospital: hospital,
+                        travel_date: travelDate,
+                        message: document.getElementById('message').value.trim() || null,
+                        status: 'new_lead_b2c',
+                        created_at: new Date().toISOString()
+                    };
+                } else {
+                    const company = document.getElementById('companyName').value.trim();
+                    const partnerType = document.getElementById('partnerType').value;
+                    
+                    const b2bFields = [{ id: 'companyName', required: true }];
+                    if (!validateRequiredFields(b2bFields)) {
+                        isValid = false;
+                    }
+                    
+                    payload = {
+                        patient_name: `${name} (${company || 'N/A'})`,
+                        phone_number: phone,
+                        service_type: `[B2B] ${partnerType}`,
+                        hospital: company || 'N/A',
+                        travel_date: null,
+                        message: document.getElementById('message').value.trim() || null,
+                        status: 'new_lead_b2b',
+                        created_at: new Date().toISOString()
+                    };
+                }
+
+                if (!isValid) {
+                    showFormStatus('⚠️ กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                loadingSpinner.classList.remove('hidden');
+                submitBtnText.classList.add('hidden');
+                formStatus.classList.add('hidden');
+
+                try {
+                    if (!supabase) throw new Error('Supabase not connected');
+                    const { error } = await supabase.from('cases').insert([payload]);
+                    if (error) throw new Error(error.message);
+
+                    showFormStatus('✅ ส่งข้อมูลสำเร็จ! ทีมงานจะติดต่อกลับโดยเร็วที่สุด', 'success');
+                    form.reset();
+                    switchFormTab('b2c');
+                    document.querySelectorAll('.form-input.error').forEach(el => el.classList.remove('error'));
+                } catch (err) {
+                    showFormStatus('❌ ' + err.message, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    loadingSpinner.classList.add('hidden');
+                    submitBtnText.classList.remove('hidden');
+                }
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab === 'b2b') {
+                switchFormTab('b2b');
+            }
+
+            // Auto-init language switcher from main.js
+            if (typeof window.initLanguageSwitcher === 'function') {
+                window.initLanguageSwitcher();
+            }
+        })();
+    </script>
+</body>
+</html>

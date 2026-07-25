@@ -169,13 +169,25 @@
                 document.getElementById('categoryTag').textContent = p.category;
             }
 
-            const esc = window.escapeHtml;
+            const esc = window.escapeHtml || escapeHtmlFallback;
             const thumbs = images.length > 1 ? images : [mainImg];
             document.getElementById('galleryThumbs').innerHTML = thumbs.map((img, i) => `
                 <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="selectImage('${esc(img)}', this)">
                     <img src="${esc(img)}" alt="gallery ${i + 1}" loading="lazy" />
                 </div>
             `).join('');
+        }
+
+        // Fallback in case js/main.js on the server is an older version
+        // without window.escapeHtml — prevents a silent crash → errorState.
+        function escapeHtmlFallback(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
         window.selectImage = function(src, el) {
@@ -205,7 +217,7 @@
                 return;
             }
             document.getElementById('packagesEmpty').classList.add('hidden');
-            const esc = window.escapeHtml;
+            const esc = window.escapeHtml || escapeHtmlFallback;
             const grid = document.getElementById('packagesGrid');
             grid.classList.remove('hidden');
             grid.innerHTML = filtered.map(pkg => `

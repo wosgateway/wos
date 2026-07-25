@@ -18,7 +18,7 @@
     <!-- ===== HEADER ===== -->
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+            <a href="index.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
                 WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
@@ -118,6 +118,7 @@
         const partnerId = window.getQueryParam('id');
         let allPackages = [];
         let currentFilter = 'all';
+        let currentPartner = null;
 
         if (!partnerId) {
             showError();
@@ -144,6 +145,7 @@
         }
 
         function renderPartner(p) {
+            currentPartner = p;
             document.title = `WOS Concierge — ${p.name}`;
             const images = [p.cover_image_url, ...(p.gallery_urls || [])].filter(Boolean);
             const mainImg = images[0] || 'images/hero/hero-main.webp';
@@ -152,21 +154,26 @@
             document.getElementById('mainImage').alt = p.name;
             document.getElementById('partnerName').textContent = p.name;
             document.getElementById('partnerProvince').textContent = `📍 ${p.province || '-'}`;
-            document.getElementById('categoryTag').textContent = p.category;
             document.getElementById('ratingBadge').textContent = `⭐ ${p.rating ?? '-'}`;
             document.getElementById('partnerDescription').textContent = p.description || '';
             document.getElementById('breadcrumbCurrent').textContent = p.name;
 
             const cat = (window.WOS_CATEGORIES || []).find(c => c.dbCategories.includes(p.category));
+            const lang = window.getCurrentLang();
             if (cat) {
+                document.getElementById('categoryTag').textContent = cat.label[lang] || cat.label.th;
                 document.getElementById('breadcrumbCategory').href = `category.html?slug=${cat.slug}`;
-                document.getElementById('breadcrumbCategory').textContent = cat.label[window.getCurrentLang()] || cat.label.th;
+                document.getElementById('breadcrumbCategory').textContent = cat.label[lang] || cat.label.th;
+            } else {
+                // Fallback: no matching category metadata — show raw DB value
+                document.getElementById('categoryTag').textContent = p.category;
             }
 
+            const esc = window.escapeHtml;
             const thumbs = images.length > 1 ? images : [mainImg];
             document.getElementById('galleryThumbs').innerHTML = thumbs.map((img, i) => `
-                <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="selectImage('${img}', this)">
-                    <img src="${img}" alt="gallery ${i + 1}" loading="lazy" />
+                <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="selectImage('${esc(img)}', this)">
+                    <img src="${esc(img)}" alt="gallery ${i + 1}" loading="lazy" />
                 </div>
             `).join('');
         }
@@ -198,19 +205,20 @@
                 return;
             }
             document.getElementById('packagesEmpty').classList.add('hidden');
+            const esc = window.escapeHtml;
             const grid = document.getElementById('packagesGrid');
             grid.classList.remove('hidden');
             grid.innerHTML = filtered.map(pkg => `
-                <a href="program-detail.html?id=${pkg.id}" class="package-card card-shadow">
-                    ${pkg.image_url ? `<img src="${pkg.image_url}" alt="${pkg.title}" loading="lazy" class="w-full h-32 object-cover rounded-xl -mt-1" />` : ''}
+                <a href="program-detail.html?id=${esc(pkg.id)}" class="package-card card-shadow">
+                    ${pkg.image_url ? `<img src="${esc(pkg.image_url)}" alt="${esc(pkg.title)}" loading="lazy" class="w-full h-32 object-cover rounded-xl -mt-1" />` : ''}
                     ${pkg.is_promotion ? '<span class="promo-badge w-fit">🔥 โปรโมชัน</span>' : ''}
-                    <h3 class="font-bold text-slate-900">${pkg.title}</h3>
-                    <p class="text-sm text-slate-500 line-clamp-2">${pkg.description || ''}</p>
+                    <h3 class="font-bold text-slate-900">${esc(pkg.title)}</h3>
+                    <p class="text-sm text-slate-500 line-clamp-2">${esc(pkg.description) || ''}</p>
                     <div class="flex items-end gap-2 mt-auto pt-2">
                         ${pkg.special_price ? `<span class="price-original">${window.formatTHB(pkg.original_price)}</span>` : ''}
                         <span class="price-special">${window.formatTHB(pkg.special_price || pkg.original_price)}</span>
                     </div>
-                    ${pkg.duration ? `<span class="text-xs text-slate-400">⏱ ${pkg.duration}</span>` : ''}
+                    ${pkg.duration ? `<span class="text-xs text-slate-400">⏱ ${esc(pkg.duration)}</span>` : ''}
                 </a>
             `).join('');
         }
@@ -222,6 +230,14 @@
                 currentFilter = this.dataset.filter;
                 renderPackages();
             });
+        });
+
+        // Re-render language-dependent dynamic content (category tag, prices, etc.)
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(() => {
+                if (currentPartner) renderPartner(currentPartner);
+                if (allPackages.length) renderPackages();
+            }, 0));
         });
     </script>
 </body>

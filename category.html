@@ -18,7 +18,7 @@
     <!-- ===== HEADER ===== -->
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="home.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
+            <a href="index.html" class="text-2xl font-bold text-primary tracking-tight flex items-center gap-1">
                 WOS<span class="text-amber-500 font-light text-base align-top">.os</span>
             </a>
             <div class="flex items-center gap-2 sm:gap-3">
@@ -96,28 +96,54 @@
 
         const slug = window.getQueryParam('slug');
         const category = window.getCategoryBySlug(slug);
-        const lang = window.getCurrentLang();
 
         function t(labelObj) {
-            return labelObj[lang] || labelObj.th;
+            return labelObj[window.getCurrentLang()] || labelObj.th;
         }
 
-        if (!category) {
-            document.getElementById('categoryTitle').textContent = 'ไม่พบหมวดหมู่';
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('errorState').classList.remove('hidden');
-        } else {
+        const NOT_FOUND = { th: 'ไม่พบหมวดหมู่', lo: 'ບໍ່ພົບໝວດໝູ່', en: 'Category not found' };
+
+        function renderCategoryText() {
+            if (!category) {
+                document.getElementById('categoryTitle').textContent = t(NOT_FOUND);
+                return;
+            }
             document.getElementById('categoryIcon').textContent = category.icon;
             document.getElementById('categoryTitle').textContent = t(category.label);
             document.getElementById('breadcrumbCurrent').textContent = t(category.label);
             document.title = `WOS Concierge — ${t(category.label)}`;
+        }
 
+        if (!category) {
+            renderCategoryText();
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        } else {
+            renderCategoryText();
             loadPartners();
+        }
+
+        let loadedPartners = null;
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(() => {
+                renderCategoryText();
+                if (loadedPartners) renderCount(loadedPartners.length);
+            }, 0));
+        });
+
+        function renderCount(count) {
+            const lang = window.getCurrentLang();
+            document.getElementById('categoryCount').textContent =
+                lang === 'en' ? `${count} partners` :
+                lang === 'lo' ? `${count} ຄູ່ຮ່ວມງານ` :
+                `${count} พาร์ทเนอร์`;
         }
 
         async function loadPartners() {
             try {
                 const partners = await window.fetchPartners(category.dbCategories);
+                loadedPartners = partners;
                 document.getElementById('loadingState').classList.add('hidden');
 
                 if (!partners || partners.length === 0) {
@@ -126,25 +152,23 @@
                     return;
                 }
 
-                document.getElementById('categoryCount').textContent =
-                    lang === 'en' ? `${partners.length} partners` :
-                    lang === 'lo' ? `${partners.length} ຄູ່ຮ່ວມງານ` :
-                    `${partners.length} พาร์ทเนอร์`;
+                renderCount(partners.length);
 
+                const esc = window.escapeHtml;
                 const grid = document.getElementById('partnerGrid');
                 grid.classList.remove('hidden');
                 grid.innerHTML = partners.map(p => `
-                    <a href="partner-detail.html?id=${p.id}" class="partner-card card-shadow">
+                    <a href="partner-detail.html?id=${esc(p.id)}" class="partner-card card-shadow">
                         <div class="cover">
-                            <img src="${p.cover_image_url || 'images/hero/hero-main.webp'}" alt="${p.name}" loading="lazy" />
+                            <img src="${esc(p.cover_image_url) || 'images/hero/hero-main.webp'}" alt="${esc(p.name)}" loading="lazy" />
                         </div>
                         <div class="p-4">
                             <div class="flex items-center justify-between gap-2 mb-1">
-                                <h3 class="font-bold text-slate-900 leading-snug">${p.name}</h3>
+                                <h3 class="font-bold text-slate-900 leading-snug">${esc(p.name)}</h3>
                             </div>
-                            <p class="text-sm text-slate-500 mb-2">📍 ${p.province || '-'}</p>
+                            <p class="text-sm text-slate-500 mb-2">📍 ${esc(p.province) || '-'}</p>
                             <div class="flex items-center justify-between">
-                                <span class="rating-badge">⭐ ${p.rating ?? '-'}</span>
+                                <span class="rating-badge">⭐ ${esc(p.rating ?? '-')}</span>
                             </div>
                         </div>
                     </a>

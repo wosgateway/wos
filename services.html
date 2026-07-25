@@ -23,7 +23,7 @@
         <span>
             🔬 <span class="lang-content active" data-lang="th">ระบบรายงานผู้ป่วยออนไลน์ — เข้าถึงผลตรวจและประวัติการรักษาของคุณได้ทุกที่ทุกเวลา</span>
             <span class="lang-content" data-lang="lo">ລະບົບລາຍງານຄົນເຈັບອອນລາຍ — ເຂົ້າເຖິງຜົນກວດ ແລະ ປະຫວັດການຮັກສາຂອງທ່ານໄດ້ທຸກທີ່ທຸກເວລາ</span>
-            <span class="lang-content" data-lang="en">🔬 Access Your Clinical Reports — View test results and medical records anytime, anywhere</span>
+            <span class="lang-content" data-lang="en">Access Your Clinical Reports — View test results and medical records anytime, anywhere</span>
         </span>
         <button class="close-btn" onclick="document.getElementById('announcementBar').style.display='none'" aria-label="ปิดประกาศ">
             &times;
@@ -77,35 +77,67 @@
                 <span class="lang-content" data-lang="lo">ເລືອກໝວດໝູ່ບໍລິການ</span>
                 <span class="lang-content" data-lang="en">Select Service Category</span>
             </h2>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" onclick="document.getElementById('serviceType').value='consultation'">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4" id="categoryCardGrid">
+                <button type="button" class="cat-select-card w-full card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" data-service="consultation">
                     <div class="h-32 -mx-6 -mt-6 mb-3 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <img src="images/services/doctor-consult.webp" alt="ปรึกษาแพทย์" class="w-full h-full object-cover" loading="lazy" />
+                        <img src="images/services/doctor-consult.webp" alt="ปรึกษาแพทย์" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.textContent='🩺'" />
                     </div>
-                    <h4 class="font-bold text-slate-900">ปรึกษาแพทย์</h4>
-                    <p class="text-xs text-slate-500">แพทย์เฉพาะทางทุกสาขา</p>
-                </div>
-                <div class="card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" onclick="document.getElementById('serviceType').value='treatment'">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ปรึกษาแพทย์</span>
+                        <span class="lang-content" data-lang="lo">ປຶກສາແພດ</span>
+                        <span class="lang-content" data-lang="en">Doctor Consultation</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">
+                        <span class="lang-content active" data-lang="th">แพทย์เฉพาะทางทุกสาขา</span>
+                        <span class="lang-content" data-lang="lo">ແພດສະເພາະທາງທຸກສາຂາ</span>
+                        <span class="lang-content" data-lang="en">Specialists across every field</span>
+                    </p>
+                </button>
+                <button type="button" class="cat-select-card w-full card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" data-service="treatment">
                     <div class="h-32 -mx-6 -mt-6 mb-3 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <img src="images/services/aesthetic-surgery.webp" alt="รักษา/ผ่าตัด" class="w-full h-full object-cover" loading="lazy" />
+                        <img src="images/services/aesthetic-surgery.webp" alt="รักษา/ผ่าตัด" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.textContent='🏥'" />
                     </div>
-                    <h4 class="font-bold text-slate-900">รักษา/ผ่าตัด</h4>
-                    <p class="text-xs text-slate-500">การรักษาและศัลยกรรม</p>
-                </div>
-                <div class="card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" onclick="document.getElementById('serviceType').value='checkup'">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">รักษา/ผ่าตัด</span>
+                        <span class="lang-content" data-lang="lo">ຮັກສາ/ຜ່າຕັດ</span>
+                        <span class="lang-content" data-lang="en">Treatment / Surgery</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">
+                        <span class="lang-content active" data-lang="th">การรักษาและศัลยกรรม</span>
+                        <span class="lang-content" data-lang="lo">ການຮັກສາ ແລະ ການຜ່າຕັດ</span>
+                        <span class="lang-content" data-lang="en">Medical treatment and surgery</span>
+                    </p>
+                </button>
+                <button type="button" class="cat-select-card w-full card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" data-service="checkup">
                     <div class="h-32 -mx-6 -mt-6 mb-3 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <img src="images/services/health-checkup.webp" alt="ตรวจสุขภาพ" class="w-full h-full object-cover" loading="lazy" />
+                        <img src="images/services/health-checkup.webp" alt="ตรวจสุขภาพ" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.textContent='📋'" />
                     </div>
-                    <h4 class="font-bold text-slate-900">ตรวจสุขภาพ</h4>
-                    <p class="text-xs text-slate-500">แพ็กเกจตรวจประจำปี</p>
-                </div>
-                <div class="card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" onclick="document.getElementById('serviceType').value='wellness'">
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ตรวจสุขภาพ</span>
+                        <span class="lang-content" data-lang="lo">ກວດສຸຂະພາບ</span>
+                        <span class="lang-content" data-lang="en">Health Checkup</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">
+                        <span class="lang-content active" data-lang="th">แพ็กเกจตรวจประจำปี</span>
+                        <span class="lang-content" data-lang="lo">ແພັກເກັດກວດປະຈຳປີ</span>
+                        <span class="lang-content" data-lang="en">Annual checkup packages</span>
+                    </p>
+                </button>
+                <button type="button" class="cat-select-card w-full card-shadow bg-white rounded-2xl p-6 text-center border border-slate-100 transition-all duration-300 hover:-translate-y-1 hover:border-primary cursor-pointer" data-service="wellness">
                     <div class="h-32 -mx-6 -mt-6 mb-3 overflow-hidden rounded-t-2xl bg-slate-100">
-                        <img src="images/services/personal-coordinator.webp" alt="ความงาม/ทันตกรรม" class="w-full h-full object-cover" loading="lazy" />
+                        <img src="images/services/personal-coordinator.webp" alt="ความงาม/ทันตกรรม" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.textContent='✨'" />
                     </div>
-                    <h4 class="font-bold text-slate-900">ความงาม/ทันตกรรม</h4>
-                    <p class="text-xs text-slate-500">ศัลยกรรมและทันตกรรม</p>
-                </div>
+                    <h4 class="font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">ความงาม/ทันตกรรม</span>
+                        <span class="lang-content" data-lang="lo">ຄວາມງາມ/ທັນຕະກຳ</span>
+                        <span class="lang-content" data-lang="en">Aesthetics / Dental</span>
+                    </h4>
+                    <p class="text-xs text-slate-500">
+                        <span class="lang-content active" data-lang="th">ศัลยกรรมและทันตกรรม</span>
+                        <span class="lang-content" data-lang="lo">ການຜ່າຕັດຄວາມງາມ ແລະ ທັນຕະກຳ</span>
+                        <span class="lang-content" data-lang="en">Cosmetic surgery and dental care</span>
+                    </p>
+                </button>
             </div>
         </div>
     </section>
@@ -197,7 +229,7 @@
 
                 <form id="b2cForm" class="space-y-5" novalidate>
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="patientName">
                             <span class="lang-content active" data-lang="th">ชื่อ-นามสกุล <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="lo">ຊື່-ນາມສະກຸນ <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="en">Full Name <span class="text-red-500">*</span></span>
@@ -206,7 +238,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="phoneNumber">
                             <span class="lang-content active" data-lang="th">เบอร์โทร / WhatsApp <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="lo">ເບີໂທ / WhatsApp <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="en">Phone / WhatsApp <span class="text-red-500">*</span></span>
@@ -215,7 +247,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="serviceType">
                             <span class="lang-content active" data-lang="th">ประเภทบริการ <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="lo">ປະເພດບໍລິການ <span class="text-red-500">*</span></span>
                             <span class="lang-content" data-lang="en">Service Type <span class="text-red-500">*</span></span>
@@ -230,7 +262,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="hospital">
                             <span class="lang-content active" data-lang="th">โรงพยาบาลที่สนใจ</span>
                             <span class="lang-content" data-lang="lo">ໂຮງໝໍທີ່ສົນໃຈ</span>
                             <span class="lang-content" data-lang="en">Preferred Hospital</span>
@@ -245,7 +277,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="travelDate">
                             <span class="lang-content active" data-lang="th">วันที่ต้องการเดินทาง</span>
                             <span class="lang-content" data-lang="lo">ວັນທີ່ຕ້ອງການເດີນທາງ</span>
                             <span class="lang-content" data-lang="en">Preferred Travel Date</span>
@@ -254,7 +286,7 @@
                     </div>
 
                     <div>
-                        <label class="form-label">
+                        <label class="form-label" for="message">
                             <span class="lang-content active" data-lang="th">รายละเอียดเพิ่มเติม</span>
                             <span class="lang-content" data-lang="lo">ລາຍລະອຽດເພີ່ມເຕີມ</span>
                             <span class="lang-content" data-lang="en">Additional Details</span>
@@ -338,7 +370,11 @@
                     </div>
                 </div>
                 <div>
-                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">บริการ</div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">บริการ</span>
+                        <span class="lang-content" data-lang="lo">ບໍລິການ</span>
+                        <span class="lang-content" data-lang="en">Services</span>
+                    </div>
                     <ul class="space-y-1 text-xs">
                         <li><a href="services.html" class="hover:text-white transition">Consult</a></li>
                         <li><a href="services.html" class="hover:text-white transition">Checkup</a></li>
@@ -347,7 +383,11 @@
                     </ul>
                 </div>
                 <div>
-                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">พันธมิตร</div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">พันธมิตร</span>
+                        <span class="lang-content" data-lang="lo">ຄູ່ຮ່ວມງານ</span>
+                        <span class="lang-content" data-lang="en">Partners</span>
+                    </div>
                     <ul class="space-y-1 text-xs">
                         <li><a href="partner.html" class="hover:text-white transition">Join Network</a></li>
                         <li><a href="partner.html" class="hover:text-white transition">Investor</a></li>
@@ -356,7 +396,11 @@
                     </ul>
                 </div>
                 <div>
-                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">ติดต่อ</div>
+                    <div class="text-white font-semibold text-xs uppercase tracking-wider mb-3">
+                        <span class="lang-content active" data-lang="th">ติดต่อ</span>
+                        <span class="lang-content" data-lang="lo">ຕິດຕໍ່</span>
+                        <span class="lang-content" data-lang="en">Contact</span>
+                    </div>
                     <ul class="space-y-1 text-xs">
                         <li><a href="tel:+66855907666" class="hover:text-white">โทร (ไทย): 085-590-7666</a></li>
                         <li><a href="tel:+8562098724718" class="hover:text-white">โทร (ลาว): +856 20 9872 4718</a></li>
@@ -378,10 +422,21 @@
         (function() {
             'use strict';
 
-            const supabase = window.__supabase;
-            if (!supabase) {
+            if (!window.__supabase) {
                 console.warn('⚠️ Supabase client not available');
             }
+
+            // ===== Category cards: select service type + jump to booking form =====
+            const categoryCards = document.querySelectorAll('.cat-select-card');
+            const serviceTypeSelect = document.getElementById('serviceType');
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    categoryCards.forEach(c => c.classList.remove('border-primary', 'bg-primary-light'));
+                    this.classList.add('border-primary', 'bg-primary-light');
+                    if (serviceTypeSelect) serviceTypeSelect.value = this.dataset.service;
+                    document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
 
             const form = document.getElementById('b2cForm');
             const submitBtn = document.getElementById('b2cSubmitBtn');
@@ -443,9 +498,9 @@
                 };
 
                 try {
-                    if (!supabase) throw new Error('Supabase not connected');
-                    const { error } = await supabase.from('cases').insert([payload]);
-                    if (error) throw new Error(error.message);
+                    if (!window.__supabase) throw new Error('Supabase not connected');
+                    if (typeof window.submitBooking !== 'function') throw new Error('Booking helper not available');
+                    await window.submitBooking(payload);
 
                     showStatus('✅ ส่งข้อมูลสำเร็จ! ทีมงาน WOS จะติดต่อกลับโดยเร็วที่สุด', 'success');
                     form.reset();

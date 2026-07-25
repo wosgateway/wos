@@ -33,7 +33,11 @@
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
         <nav class="breadcrumb">
-            <a href="home.html">หน้าหลัก</a> <span class="mx-1">/</span>
+            <a href="home.html">
+                <span class="lang-content active" data-lang="th">หน้าหลัก</span>
+                <span class="lang-content" data-lang="lo">ໜ້າຫຼັກ</span>
+                <span class="lang-content" data-lang="en">Home</span>
+            </a> <span class="mx-1">/</span>
             <a id="breadcrumbCategory" href="#">หมวดหมู่</a> <span class="mx-1">/</span>
             <span id="breadcrumbCurrent" class="text-slate-800 font-medium">พาร์ทเนอร์</span>
         </nav>
@@ -47,7 +51,11 @@
 
     <div id="errorState" class="empty-state hidden max-w-6xl mx-auto px-4 sm:px-6">
         <span class="icon">⚠️</span>
-        <p>ไม่พบข้อมูลพาร์ทเนอร์ที่ต้องการ</p>
+        <p>
+            <span class="lang-content active" data-lang="th">ไม่พบข้อมูลพาร์ทเนอร์ที่ต้องการ</span>
+            <span class="lang-content" data-lang="lo">ບໍ່ພົບຂໍ້ມູນຄູ່ຮ່ວມງານທີ່ຕ້ອງການ</span>
+            <span class="lang-content" data-lang="en">Couldn't find this partner</span>
+        </p>
     </div>
 
     <div id="content" class="hidden">
@@ -75,10 +83,22 @@
         <section class="section-padding !pt-10">
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">โปรแกรมและบริการ</h2>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">
+                        <span class="lang-content active" data-lang="th">โปรแกรมและบริการ</span>
+                        <span class="lang-content" data-lang="lo">ໂປຣແກຣມ ແລະ ບໍລິການ</span>
+                        <span class="lang-content" data-lang="en">Programs & Services</span>
+                    </h2>
                     <div class="flex gap-2">
-                        <button class="filter-pill active" data-filter="all">แพ็กเกจทั้งหมด</button>
-                        <button class="filter-pill" data-filter="promo">โปรโมชันพิเศษ 🔥</button>
+                        <button class="filter-pill active" data-filter="all">
+                            <span class="lang-content active" data-lang="th">แพ็กเกจทั้งหมด</span>
+                            <span class="lang-content" data-lang="lo">ແພັກເກັດທັງໝົດ</span>
+                            <span class="lang-content" data-lang="en">All Packages</span>
+                        </button>
+                        <button class="filter-pill" data-filter="promo">
+                            <span class="lang-content active" data-lang="th">โปรโมชันพิเศษ 🔥</span>
+                            <span class="lang-content" data-lang="lo">ໂປຣໂມຊັນພິເສດ 🔥</span>
+                            <span class="lang-content" data-lang="en">Special Promotions 🔥</span>
+                        </button>
                     </div>
                 </div>
 
@@ -90,7 +110,11 @@
                 <div id="packagesGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 hidden"></div>
                 <div id="packagesEmpty" class="empty-state hidden">
                     <span class="icon">📋</span>
-                    <p>ยังไม่มีโปรแกรมในหมวดที่เลือก</p>
+                    <p>
+                        <span class="lang-content active" data-lang="th">ยังไม่มีโปรแกรมในหมวดที่เลือก</span>
+                        <span class="lang-content" data-lang="lo">ຍັງບໍ່ມີໂປຣແກຣມໃນໝວດທີ່ເລືອກ</span>
+                        <span class="lang-content" data-lang="en">No programs in this filter yet</span>
+                    </p>
                 </div>
 
                 <div class="text-center mt-10">

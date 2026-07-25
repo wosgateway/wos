@@ -154,7 +154,17 @@
 
                 renderCount(partners.length);
 
-                const esc = window.escapeHtml;
+                // Fallback in case js/main.js on the server is an older version
+                // without window.escapeHtml — prevents a silent crash → errorState.
+                const esc = window.escapeHtml || function(str) {
+                    if (str === null || str === undefined) return '';
+                    return String(str)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                };
                 const grid = document.getElementById('partnerGrid');
                 grid.classList.remove('hidden');
                 grid.innerHTML = partners.map(p => `

@@ -141,7 +141,7 @@
     // Submit a new booking
     window.submitBooking = async function(payload) {
         if (!window.__supabase) throw new Error('Supabase client is not initialized');
-        const { data, error } = await window.__supabase.from('bookings').insert([payload]).select();
+        const { data, error } = await window.__supabase.from('cases').insert([payload]).select();
         if (error) throw error;
         return data;
     };
@@ -229,11 +229,26 @@
     };
 
     // ============================================================
-    // 💰 CURRENCY FORMAT HELPER
+    // 💰 CURRENCY FORMAT HELPER (language-aware)
     // ============================================================
     window.formatTHB = function(amount) {
         if (amount === null || amount === undefined) return '-';
-        return Number(amount).toLocaleString('th-TH') + ' บาท';
+        const lang = window.getCurrentLang();
+        const suffix = lang === 'en' ? ' THB' : lang === 'lo' ? ' ບາດ' : ' บาท';
+        return Number(amount).toLocaleString('th-TH') + suffix;
+    };
+
+    // ============================================================
+    // 🛡️ HTML ESCAPE HELPER (prevent stored-XSS from DB content)
+    // ============================================================
+    window.escapeHtml = function(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     };
 
     // ============================================================

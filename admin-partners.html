@@ -37,13 +37,14 @@
                 <div class="text-3xl font-bold text-primary">WOS<span class="text-amber-500 font-light text-lg align-top">.os</span></div>
                 <p class="text-slate-500 text-sm mt-1">Admin — พาร์ทเนอร์ & แพ็กเกจ</p>
             </div>
-            <label class="form-label">รหัสผ่านทีมงาน</label>
-            <input type="password" id="gatePassword" class="form-input" placeholder="••••••••" autocomplete="off" />
-            <p id="gateError" class="text-red-600 text-sm mt-2 hidden">รหัสผ่านไม่ถูกต้อง</p>
+            <label class="form-label">อีเมลทีมงาน</label>
+            <input type="email" id="gateEmail" class="form-input mb-3" placeholder="admin@wos.asia" autocomplete="username" />
+            <label class="form-label">รหัสผ่าน</label>
+            <input type="password" id="gatePassword" class="form-input" placeholder="••••••••" autocomplete="current-password" />
+            <p id="gateError" class="text-red-600 text-sm mt-2 hidden">อีเมลหรือรหัสผ่านไม่ถูกต้อง</p>
             <button id="gateSubmit" class="btn-primary w-full justify-center mt-4">เข้าสู่ระบบ</button>
             <p class="text-xs text-slate-400 mt-4 leading-relaxed">
-                ⚠️ หน้านี้ป้องกันด้วยรหัสผ่านฝั่งเบราว์เซอร์เท่านั้น ไม่ใช่การยืนยันตัวตนระดับฐานข้อมูล
-                ห้ามแชร์ลิงก์หรือรหัสผ่านนี้ให้บุคคลภายนอก
+                🔒 ล็อกอินผ่าน Supabase Auth (บัญชีเดียวกับ admin.html) — ห้ามแชร์บัญชีให้บุคคลภายนอก
             </p>
         </div>
     </div>
@@ -292,14 +293,19 @@
     (function() {
         'use strict';
 
-        // Same password + session key as admin.html so a login on either page unlocks both.
-        const ADMIN_PASSWORD = 'Boy2517';
-        const SESSION_KEY = 'wos-admin-unlocked';
-
+        // Auth via Supabase Auth — same account works on admin.html since the
+        // session is stored by the Supabase client itself (shared browser storage).
         const gateScreen = document.getElementById('gateScreen');
         const dashboard = document.getElementById('dashboard');
+        const gateEmail = document.getElementById('gateEmail');
         const gatePassword = document.getElementById('gatePassword');
         const gateError = document.getElementById('gateError');
+        const gateSubmit = document.getElementById('gateSubmit');
+
+        // ============================================================
+        // SHARED
+        // ============================================================
+        const supabase = window.__supabase;
 
         function unlock() {
             gateScreen.classList.add('hidden');
@@ -307,31 +313,48 @@
             init();
         }
 
-        document.getElementById('gateSubmit').addEventListener('click', tryUnlock);
-        gatePassword.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryUnlock(); });
-
-        function tryUnlock() {
-            if (gatePassword.value === ADMIN_PASSWORD) {
-                try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) {}
-                unlock();
-            } else {
-                gateError.classList.remove('hidden');
-            }
+        function lock() {
+            dashboard.classList.add('hidden');
+            gateScreen.classList.remove('hidden');
         }
 
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+        gateSubmit.addEventListener('click', tryUnlock);
+        gatePassword.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryUnlock(); });
+        gateEmail.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryUnlock(); });
+
+        async function tryUnlock() {
+            if (!supabase) { gateError.textContent = 'ไม่สามารถเชื่อมต่อ Supabase ได้'; gateError.classList.remove('hidden'); return; }
+            gateSubmit.disabled = true;
+            gateError.classList.add('hidden');
+            const { error } = await supabase.auth.signInWithPassword({
+                email: gateEmail.value.trim(),
+                password: gatePassword.value
+            });
+            gateSubmit.disabled = false;
+            if (error) {
+                gateError.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+                gateError.classList.remove('hidden');
+                return;
+            }
+            unlock();
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            if (supabase) await supabase.auth.signOut();
             location.reload();
         });
 
-        try {
-            if (sessionStorage.getItem(SESSION_KEY) === '1') unlock();
-        } catch (e) {}
+        (async function initAuth() {
+            if (!supabase) return;
+            const { data } = await supabase.auth.getSession();
+            if (data && data.session) unlock();
+        })();
 
-        // ============================================================
-        // SHARED
-        // ============================================================
-        const supabase = window.__supabase;
+        if (supabase) {
+            supabase.auth.onAuthStateChange(function(event) {
+                if (event === 'SIGNED_OUT') lock();
+            });
+        }
         let allPartners = [];
         let allPackages = [];
         let currentGalleryUrls = []; // gallery URLs staged for the partner currently being edited

@@ -567,7 +567,7 @@
             const { data, error } = await supabase
                 .from('bookings')
                 .select(`
-                    id, customer_name, customer_phone, customer_line, country,
+                    id, patient_name, customer_phone, customer_line, country,
                     booking_date, booking_time, need_transport, need_hotel,
                     hotel_partner_id, transport_partner_id,
                     attachment_url, status, created_at,
@@ -655,7 +655,7 @@
                         <div class="text-slate-500 text-xs">${escapeHtml(b.booking_time || '-')}</div>
                     </td>
                     <td class="py-3 px-4">
-                        <div class="font-medium text-slate-800">${escapeHtml(b.customer_name)}</div>
+                        <div class="font-medium text-slate-800">${escapeHtml(b.patient_name)}</div>
                         <div class="text-slate-500 text-xs">${escapeHtml(b.country || '-')}</div>
                     </td>
                     <td class="py-3 px-4 text-slate-600">

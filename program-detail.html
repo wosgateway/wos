@@ -84,10 +84,10 @@
                 </div>
 
                 <div class="mt-8">
-                    <a href="services.html#booking" class="btn-primary w-full sm:w-auto justify-center text-base">
-                        <span class="lang-content active" data-lang="th">สนใจโปรแกรมนี้ ให้ทีมติดต่อกลับ</span>
-                        <span class="lang-content" data-lang="lo">ສົນໃຈໂປຣແກຣມນີ້ ໃຫ້ທີມຕິດຕໍ່ກັບຄືນ</span>
-                        <span class="lang-content" data-lang="en">Interested — have the team contact me</span>
+                    <a id="bookNowBtn" href="services.html#booking" class="btn-primary w-full sm:w-auto justify-center text-base">
+                        <span class="lang-content active" data-lang="th">จองโปรแกรมนี้เลย</span>
+                        <span class="lang-content" data-lang="lo">ຈອງໂປຣແກຣມນີ້ເລີຍ</span>
+                        <span class="lang-content" data-lang="en">Book this program</span>
                     </a>
                 </div>
 
@@ -161,6 +161,7 @@
             }
 
             document.getElementById('promoBadge').classList.toggle('hidden', !pkg.is_promotion);
+            document.getElementById('bookNowBtn').href = `booking.html?id=${encodeURIComponent(pkg.id)}`;
 
             const priceOriginal = document.getElementById('priceOriginal');
             const priceSpecial = document.getElementById('priceSpecial');

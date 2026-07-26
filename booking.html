@@ -164,7 +164,12 @@
                         <span class="lang-content" data-lang="lo">ອັບໂຫລດເອກະສານ/ຜົນກວດ (ຖ້າມີ)</span>
                         <span class="lang-content" data-lang="en">Upload documents/results (optional)</span>
                     </label>
-                    <input type="file" id="attachment" class="form-input" accept=".pdf,.jpg,.jpeg,.png" />
+                    <div class="flex items-center gap-2">
+                        <input type="file" id="attachment" class="form-input flex-1" accept=".pdf,.jpg,.jpeg,.png" />
+                        <button type="button" id="removeAttachmentBtn" class="hidden shrink-0 w-9 h-9 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-300 transition flex items-center justify-center" title="ลบไฟล์">
+                            ✕
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn-primary w-full justify-center text-base mt-2">
@@ -219,6 +224,19 @@
                 showError();
             }
         }
+
+        // ---- Attachment: allow removing a chosen file before submit ----
+        const attachmentInput = document.getElementById('attachment');
+        const removeAttachmentBtn = document.getElementById('removeAttachmentBtn');
+
+        attachmentInput.addEventListener('change', function() {
+            removeAttachmentBtn.classList.toggle('hidden', !this.files.length);
+        });
+
+        removeAttachmentBtn.addEventListener('click', function() {
+            attachmentInput.value = '';
+            removeAttachmentBtn.classList.add('hidden');
+        });
 
         // ---- Optional hotel/transport partner pickers ----
         // Dropdowns stay hidden until the matching checkbox is ticked, and the
@@ -318,6 +336,7 @@
                 document.getElementById('bookingForm').reset();
                 document.getElementById('transportPartnerWrap').classList.add('hidden');
                 document.getElementById('hotelPartnerWrap').classList.add('hidden');
+                removeAttachmentBtn.classList.add('hidden');
                 submitBtn.disabled = true;
                 btnLoading.classList.add('hidden');
                 btnText.classList.remove('hidden');

@@ -499,8 +499,8 @@
 
                 try {
                     if (!window.__supabase) throw new Error('Supabase not connected');
-                    if (typeof window.submitBooking !== 'function') throw new Error('Booking helper not available');
-                    await window.submitBooking(payload);
+                    const { error } = await window.__supabase.from('cases').insert([payload]);
+                    if (error) throw new Error(error.message);
 
                     showStatus('✅ ส่งข้อมูลสำเร็จ! ทีมงาน WOS จะติดต่อกลับโดยเร็วที่สุด', 'success');
                     form.reset();

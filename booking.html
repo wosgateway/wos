@@ -114,26 +114,111 @@
                     </label>
                 </div>
 
-                <div id="transportPartnerWrap" class="hidden">
-                    <label class="form-label" for="transportPartner">
-                        <span class="lang-content active" data-lang="th">ระบุแพ็กเกจรถที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
-                        <span class="lang-content" data-lang="lo">ລະບຸແພັກເກັດລົດທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
-                        <span class="lang-content" data-lang="en">Preferred transport package (optional — our team can arrange this for you)</span>
-                    </label>
-                    <select id="transportPartner" class="form-input">
-                        <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
-                    </select>
+                <div id="transportPartnerWrap" class="hidden space-y-4">
+                    <div>
+                        <label class="form-label" for="transportPartner">
+                            <span class="lang-content active" data-lang="th">ระบุแพ็กเกจรถที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
+                            <span class="lang-content" data-lang="lo">ລະບຸແພັກເກັດລົດທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
+                            <span class="lang-content" data-lang="en">Preferred transport package (optional — our team can arrange this for you)</span>
+                        </label>
+                        <select id="transportPartner" class="form-input">
+                            <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="transportMode">
+                            <span class="lang-content active" data-lang="th">รูปแบบการใช้รถ *</span>
+                            <span class="lang-content" data-lang="lo">ຮູບແບບການໃຊ້ລົດ *</span>
+                            <span class="lang-content" data-lang="en">Transport type *</span>
+                        </label>
+                        <select id="transportMode" class="form-input">
+                            <option value="one_way">🚗 ไปรับอย่างเดียว (เที่ยวเดียว)</option>
+                            <option value="round_trip">🔁 ไป-กลับ (ระบุวันไปและวันกลับ)</option>
+                            <option value="daily">📅 เหมาต่อวัน (ระบุจำนวนวัน)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label" for="transportPickupDate">
+                                <span class="lang-content active" data-lang="th">วันที่รับ *</span>
+                                <span class="lang-content" data-lang="lo">ວັນທີ່ຮັບ *</span>
+                                <span class="lang-content" data-lang="en">Pickup date *</span>
+                            </label>
+                            <input type="date" id="transportPickupDate" class="form-input" />
+                        </div>
+                        <div>
+                            <label class="form-label" for="transportPickupTime">
+                                <span class="lang-content active" data-lang="th">เวลารับ *</span>
+                                <span class="lang-content" data-lang="lo">ເວລາຮັບ *</span>
+                                <span class="lang-content" data-lang="en">Pickup time *</span>
+                            </label>
+                            <input type="time" id="transportPickupTime" class="form-input" />
+                        </div>
+                    </div>
+
+                    <div id="transportReturnWrap" class="hidden grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label" for="transportReturnDate">
+                                <span class="lang-content active" data-lang="th">วันที่ส่งกลับ *</span>
+                                <span class="lang-content" data-lang="lo">ວັນທີ່ສົ່ງກັບ *</span>
+                                <span class="lang-content" data-lang="en">Return date *</span>
+                            </label>
+                            <input type="date" id="transportReturnDate" class="form-input" />
+                        </div>
+                        <div>
+                            <label class="form-label" for="transportReturnTime">
+                                <span class="lang-content active" data-lang="th">เวลาส่งกลับ *</span>
+                                <span class="lang-content" data-lang="lo">ເວລາສົ່ງກັບ *</span>
+                                <span class="lang-content" data-lang="en">Return time *</span>
+                            </label>
+                            <input type="time" id="transportReturnTime" class="form-input" />
+                        </div>
+                    </div>
+
+                    <div id="transportDaysWrap" class="hidden">
+                        <label class="form-label" for="transportDays">
+                            <span class="lang-content active" data-lang="th">จำนวนวันที่ต้องการเหมารถ *</span>
+                            <span class="lang-content" data-lang="lo">ຈຳນວນວັນທີ່ຕ້ອງການເໝົາລົດ *</span>
+                            <span class="lang-content" data-lang="en">Number of rental days *</span>
+                        </label>
+                        <input type="number" id="transportDays" class="form-input" min="1" value="1" />
+                    </div>
                 </div>
 
-                <div id="hotelPartnerWrap" class="hidden">
-                    <label class="form-label" for="hotelPartner">
-                        <span class="lang-content active" data-lang="th">ระบุแพ็กเกจโรงแรมที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
-                        <span class="lang-content" data-lang="lo">ລະບຸແພັກເກັດໂຮງແຮມທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
-                        <span class="lang-content" data-lang="en">Preferred hotel package (optional — our team can arrange this for you)</span>
-                    </label>
-                    <select id="hotelPartner" class="form-input">
-                        <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
-                    </select>
+                <div id="hotelPartnerWrap" class="hidden space-y-4">
+                    <div>
+                        <label class="form-label" for="hotelPartner">
+                            <span class="lang-content active" data-lang="th">ระบุแพ็กเกจโรงแรมที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
+                            <span class="lang-content" data-lang="lo">ລະບຸແພັກເກັດໂຮງແຮມທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
+                            <span class="lang-content" data-lang="en">Preferred hotel package (optional — our team can arrange this for you)</span>
+                        </label>
+                        <select id="hotelPartner" class="form-input">
+                            <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
+                        </select>
+                        <p class="text-xs text-slate-400 mt-1">*ราคาที่แสดงคือราคาต่อคืน ระบบจะคำนวณราคารวมตามจำนวนคืนที่พักให้อัตโนมัติ</p>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label" for="hotelCheckinDate">
+                                <span class="lang-content active" data-lang="th">วันที่เข้าพัก *</span>
+                                <span class="lang-content" data-lang="lo">ວັນທີ່ເຂົ້າພັກ *</span>
+                                <span class="lang-content" data-lang="en">Check-in date *</span>
+                            </label>
+                            <input type="date" id="hotelCheckinDate" class="form-input" />
+                        </div>
+                        <div>
+                            <label class="form-label" for="hotelNights">
+                                <span class="lang-content active" data-lang="th">จำนวนคืน *</span>
+                                <span class="lang-content" data-lang="lo">ຈຳນວນຄືນ *</span>
+                                <span class="lang-content" data-lang="en">Number of nights *</span>
+                            </label>
+                            <input type="number" id="hotelNights" class="form-input" min="1" value="1" />
+                        </div>
+                    </div>
+                    <p id="hotelCheckoutHint" class="text-xs text-slate-500"></p>
                 </div>
 
                 <div>
@@ -271,27 +356,61 @@
 
             const transportOpt = transportSel.selectedOptions[0];
             const hotelOpt = hotelSel.selectedOptions[0];
-            const transportPrice = (needTransport && transportOpt) ? Number(transportOpt.dataset.price || 0) : 0;
-            const hotelPrice = (needHotel && hotelOpt) ? Number(hotelOpt.dataset.price || 0) : 0;
+            const transportUnitPrice = (needTransport && transportOpt) ? Number(transportOpt.dataset.price || 0) : 0;
+            const hotelUnitPrice = (needHotel && hotelOpt) ? Number(hotelOpt.dataset.price || 0) : 0;
+
+            const transportMode = document.getElementById('transportMode').value;
+            const transportDays = Math.max(1, parseInt(document.getElementById('transportDays').value, 10) || 1);
+            const transportPrice = (needTransport && transportUnitPrice)
+                ? (transportMode === 'daily' ? transportUnitPrice * transportDays : transportUnitPrice)
+                : 0;
+
+            const hotelNights = Math.max(1, parseInt(document.getElementById('hotelNights').value, 10) || 1);
+            const hotelPrice = needHotel ? hotelUnitPrice * hotelNights : 0;
 
             document.getElementById('priceMain').textContent = window.formatTHB(mainPrice);
 
             document.getElementById('priceTransportRow').classList.toggle('hidden', !needTransport);
             document.getElementById('priceTransport').textContent = (needTransport && transportPrice)
-                ? window.formatTHB(transportPrice) : (needTransport ? 'รอทีมงานแจ้งราคา' : '-');
+                ? window.formatTHB(transportPrice) + (transportMode === 'daily' ? ` (${transportDays} วัน)` : '')
+                : (needTransport ? 'รอทีมงานแจ้งราคา' : '-');
 
             document.getElementById('priceHotelRow').classList.toggle('hidden', !needHotel);
             document.getElementById('priceHotel').textContent = (needHotel && hotelPrice)
-                ? window.formatTHB(hotelPrice) : (needHotel ? 'รอทีมงานแจ้งราคา' : '-');
+                ? window.formatTHB(hotelPrice) + ` (${hotelNights} คืน)`
+                : (needHotel ? 'รอทีมงานแจ้งราคา' : '-');
 
             document.getElementById('priceTotal').textContent = window.formatTHB(mainPrice + transportPrice + hotelPrice);
             document.getElementById('priceSummary').classList.remove('hidden');
+
+            // Hotel checkout hint
+            const checkinVal = document.getElementById('hotelCheckinDate').value;
+            const hint = document.getElementById('hotelCheckoutHint');
+            if (needHotel && checkinVal) {
+                const checkout = new Date(checkinVal);
+                checkout.setDate(checkout.getDate() + hotelNights);
+                hint.textContent = `เข้าพัก ${checkinVal} ออกวันที่ ${checkout.toISOString().split('T')[0]} (${hotelNights} คืน)`;
+            } else {
+                hint.textContent = '';
+            }
         }
 
         document.getElementById('needTransport').addEventListener('change', updatePriceSummary);
         document.getElementById('needHotel').addEventListener('change', updatePriceSummary);
         document.getElementById('transportPartner').addEventListener('change', updatePriceSummary);
         document.getElementById('hotelPartner').addEventListener('change', updatePriceSummary);
+        document.getElementById('transportDays').addEventListener('input', updatePriceSummary);
+        document.getElementById('hotelNights').addEventListener('input', updatePriceSummary);
+        document.getElementById('hotelCheckinDate').addEventListener('change', updatePriceSummary);
+
+        // ---- Transport mode toggling (pickup always shown; return only for
+        // round_trip; days only for daily rental) ----
+        document.getElementById('transportMode').addEventListener('change', function() {
+            const mode = this.value;
+            document.getElementById('transportReturnWrap').classList.toggle('hidden', mode !== 'round_trip');
+            document.getElementById('transportDaysWrap').classList.toggle('hidden', mode !== 'daily');
+            updatePriceSummary();
+        });
 
         // ---- Optional hotel/transport partner pickers ----
         // Dropdowns stay hidden until the matching checkbox is ticked, and the
@@ -350,6 +469,30 @@
             }));
             if (!isValid) return;
 
+            const statusEl0 = document.getElementById('formStatus');
+            const needHotel0 = document.getElementById('needHotel').checked;
+            const needTransport0 = document.getElementById('needTransport').checked;
+            const transportMode0 = document.getElementById('transportMode').value;
+
+            if (needHotel0 && !document.getElementById('hotelCheckinDate').value) {
+                window.showFormStatus(statusEl0, '⚠️ กรุณาระบุวันที่เข้าพักโรงแรม', 'error');
+                return;
+            }
+            if (needTransport0) {
+                if (!document.getElementById('transportPickupDate').value || !document.getElementById('transportPickupTime').value) {
+                    window.showFormStatus(statusEl0, '⚠️ กรุณาระบุวันที่และเวลารับรถ', 'error');
+                    return;
+                }
+                if (transportMode0 === 'round_trip' && (!document.getElementById('transportReturnDate').value || !document.getElementById('transportReturnTime').value)) {
+                    window.showFormStatus(statusEl0, '⚠️ กรุณาระบุวันที่และเวลาส่งกลับ', 'error');
+                    return;
+                }
+                if (transportMode0 === 'daily' && !(parseInt(document.getElementById('transportDays').value, 10) > 0)) {
+                    window.showFormStatus(statusEl0, '⚠️ กรุณาระบุจำนวนวันเหมารถ', 'error');
+                    return;
+                }
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             const btnText = document.getElementById('submitBtnText');
             const btnLoading = document.getElementById('submitLoading');
@@ -382,6 +525,14 @@
                     need_hotel: document.getElementById('needHotel').checked,
                     transport_package_id: document.getElementById('transportPartner').value || null,
                     hotel_package_id: document.getElementById('hotelPartner').value || null,
+                    hotel_checkin_date: document.getElementById('needHotel').checked ? (document.getElementById('hotelCheckinDate').value || null) : null,
+                    hotel_nights: document.getElementById('needHotel').checked ? (parseInt(document.getElementById('hotelNights').value, 10) || 1) : null,
+                    transport_mode: document.getElementById('needTransport').checked ? document.getElementById('transportMode').value : null,
+                    transport_pickup_date: document.getElementById('needTransport').checked ? (document.getElementById('transportPickupDate').value || null) : null,
+                    transport_pickup_time: document.getElementById('needTransport').checked ? (document.getElementById('transportPickupTime').value || null) : null,
+                    transport_return_date: (document.getElementById('needTransport').checked && document.getElementById('transportMode').value === 'round_trip') ? (document.getElementById('transportReturnDate').value || null) : null,
+                    transport_return_time: (document.getElementById('needTransport').checked && document.getElementById('transportMode').value === 'round_trip') ? (document.getElementById('transportReturnTime').value || null) : null,
+                    transport_days: (document.getElementById('needTransport').checked && document.getElementById('transportMode').value === 'daily') ? (parseInt(document.getElementById('transportDays').value, 10) || 1) : null,
                     attachment_url: attachmentUrl,
                     status: 'pending'
                 };
@@ -394,6 +545,9 @@
                 document.getElementById('bookingForm').reset();
                 document.getElementById('transportPartnerWrap').classList.add('hidden');
                 document.getElementById('hotelPartnerWrap').classList.add('hidden');
+                document.getElementById('transportReturnWrap').classList.add('hidden');
+                document.getElementById('transportDaysWrap').classList.add('hidden');
+                document.getElementById('hotelCheckoutHint').textContent = '';
                 removeAttachmentBtn.classList.add('hidden');
                 updatePriceSummary();
                 submitBtn.disabled = true;

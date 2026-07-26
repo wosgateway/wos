@@ -253,7 +253,7 @@
                                 <th class="py-3 px-4 font-semibold">ลูกค้า</th>
                                 <th class="py-3 px-4 font-semibold">ติดต่อ</th>
                                 <th class="py-3 px-4 font-semibold">โปรแกรม / พาร์ทเนอร์</th>
-                                <th class="py-3 px-4 font-semibold">บริการเสริม</th>
+                                <th class="py-3 px-4 font-semibold">โรงแรม / รถรับส่ง</th>
                                 <th class="py-3 px-4 font-semibold">แจ้งเมื่อ</th>
                                 <th class="py-3 px-4 font-semibold">สถานะ</th>
                             </tr>
@@ -301,6 +301,7 @@
         function unlock() {
             gateScreen.classList.add('hidden');
             dashboard.classList.remove('hidden');
+            loadHotelTransportPartners();
             loadCases();
             loadBookings();
         }
@@ -338,6 +339,21 @@
         // Bookings state
         let allBookings = [];
         let bookingsFilter = 'all';
+        let hotelPartnersList = [];
+        let transportPartnersList = [];
+
+        // Cached separately from bookings load — used to populate the inline
+        // "โรงแรม / รถรับส่ง" pickers so the concierge team can fill these in
+        // for a booking even if the customer left them blank.
+        async function loadHotelTransportPartners() {
+            if (!supabase) return;
+            const [hotelRes, transportRes] = await Promise.all([
+                supabase.from('partners').select('id, name, province').eq('category', 'Hotel').eq('status', 'active').order('name'),
+                supabase.from('partners').select('id, name, province').eq('category', 'Transport').eq('status', 'active').order('name')
+            ]);
+            hotelPartnersList = hotelRes.data || [];
+            transportPartnersList = transportRes.data || [];
+        }
 
         // ============================================================
         // TAB SWITCHING
@@ -383,7 +399,7 @@
             btn.addEventListener('click', function() {
                 const target = btn.dataset.refresh;
                 if (target === 'cases') loadCases();
-                else if (target === 'bookings') loadBookings();
+                else if (target === 'bookings') { loadHotelTransportPartners().then(loadBookings); }
             });
         });
 
@@ -553,8 +569,11 @@
                 .select(`
                     id, customer_name, customer_phone, customer_line, country,
                     booking_date, booking_time, need_transport, need_hotel,
+                    hotel_partner_id, transport_partner_id,
                     attachment_url, status, created_at,
-                    packages ( title, partners ( name ) )
+                    packages ( title, partners ( name ) ),
+                    hotel_partner:hotel_partner_id ( name ),
+                    transport_partner:transport_partner_id ( name )
                 `)
                 .order('created_at', { ascending: false });
 
@@ -598,16 +617,36 @@
                     updateBookingStatus(sel.dataset.id, sel.value, sel);
                 });
             });
+
+            body.querySelectorAll('.partner-select').forEach(function(sel) {
+                sel.addEventListener('change', function() {
+                    updateBookingPartnerField(sel.dataset.id, sel.dataset.field, sel.value, sel);
+                });
+            });
         }
 
         function bookingsRowHtml(b) {
             const pkgTitle = b.packages ? b.packages.title : '-';
             const partnerName = (b.packages && b.packages.partners) ? b.packages.partners.name : '-';
-            const extras = [
-                b.need_transport ? '🚗 รถรับส่ง' : null,
-                b.need_hotel ? '🏨 โรงแรม' : null
-            ].filter(Boolean).join(' · ') || '-';
             const createdAt = b.created_at ? new Date(b.created_at).toLocaleString('th-TH') : '-';
+
+            const transportSelect = b.need_transport ? `
+                <div class="flex items-center gap-1 mb-1">
+                    <span class="text-xs">🚗</span>
+                    <select class="partner-select text-xs" data-id="${escapeAttr(b.id)}" data-field="transport_partner_id">
+                        <option value="">ยังไม่ระบุ</option>
+                        ${transportPartnersList.map(p => `<option value="${escapeAttr(p.id)}" ${b.transport_partner_id === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`).join('')}
+                    </select>
+                </div>` : '';
+            const hotelSelect = b.need_hotel ? `
+                <div class="flex items-center gap-1">
+                    <span class="text-xs">🏨</span>
+                    <select class="partner-select text-xs" data-id="${escapeAttr(b.id)}" data-field="hotel_partner_id">
+                        <option value="">ยังไม่ระบุ</option>
+                        ${hotelPartnersList.map(p => `<option value="${escapeAttr(p.id)}" ${b.hotel_partner_id === p.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`).join('')}
+                    </select>
+                </div>` : '';
+            const extras = transportSelect || hotelSelect ? `${transportSelect}${hotelSelect}` : '-';
 
             return `
                 <tr class="admin-row border-b border-slate-50 align-top">
@@ -628,7 +667,7 @@
                         <div class="font-medium text-slate-800">${escapeHtml(pkgTitle)}</div>
                         <div class="text-slate-500 text-xs">${escapeHtml(partnerName)}</div>
                     </td>
-                    <td class="py-3 px-4 text-slate-600 text-xs">${extras}</td>
+                    <td class="py-3 px-4 text-slate-600 text-xs min-w-[160px]">${extras}</td>
                     <td class="py-3 px-4 text-slate-500 text-xs whitespace-nowrap">${createdAt}</td>
                     <td class="py-3 px-4">
                         <select class="status-select status-${escapeAttr(b.status)}" data-id="${escapeAttr(b.id)}">
@@ -639,6 +678,22 @@
                     </td>
                 </tr>
             `;
+        }
+
+        async function updateBookingPartnerField(id, field, value, selectEl) {
+            selectEl.disabled = true;
+            const { error } = await supabase
+                .from('bookings')
+                .update({ [field]: value || null })
+                .eq('id', id);
+            selectEl.disabled = false;
+
+            if (error) {
+                alert('อัปเดตไม่สำเร็จ: ' + error.message);
+                return;
+            }
+            const b = allBookings.find(x => x.id === id);
+            if (b) b[field] = value || null;
         }
 
         async function updateBookingStatus(id, newStatus, selectEl) {

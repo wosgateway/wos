@@ -94,6 +94,28 @@
                     </label>
                 </div>
 
+                <div id="transportPartnerWrap" class="hidden">
+                    <label class="form-label" for="transportPartner">
+                        <span class="lang-content active" data-lang="th">ระบุผู้ให้บริการรถที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
+                        <span class="lang-content" data-lang="lo">ລະບຸຜູ້ໃຫ້ບໍລິການລົດທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
+                        <span class="lang-content" data-lang="en">Preferred transport provider (optional — our team can arrange this for you)</span>
+                    </label>
+                    <select id="transportPartner" class="form-input">
+                        <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
+                    </select>
+                </div>
+
+                <div id="hotelPartnerWrap" class="hidden">
+                    <label class="form-label" for="hotelPartner">
+                        <span class="lang-content active" data-lang="th">ระบุโรงแรมที่ต้องการ (ไม่บังคับ — ถ้าไม่แน่ใจ ทีมงานจะช่วยจัดให้)</span>
+                        <span class="lang-content" data-lang="lo">ລະບຸໂຮງແຮມທີ່ຕ້ອງການ (ບໍ່ບັງຄັບ — ຖ້າບໍ່ແນ່ໃຈ ທີມງານຈະຊ່ວຍຈັດໃຫ້)</span>
+                        <span class="lang-content" data-lang="en">Preferred hotel (optional — our team can arrange this for you)</span>
+                    </label>
+                    <select id="hotelPartner" class="form-input">
+                        <option value="">-- ให้ทีมงานช่วยจัดให้ / ບໍ່ລະບຸ / Let the team decide --</option>
+                    </select>
+                </div>
+
                 <div>
                     <label class="form-label" for="customerName">
                         <span class="lang-content active" data-lang="th">ชื่อ-นามสกุล ผู้ใช้บริการ *</span>
@@ -198,6 +220,50 @@
             }
         }
 
+        // ---- Optional hotel/transport partner pickers ----
+        // Dropdowns stay hidden until the matching checkbox is ticked, and the
+        // selection itself is never required — the concierge team can fill
+        // this in later from admin.html if the customer leaves it blank.
+        const esc = window.escapeHtml || function(s) { return s; };
+
+        function populatePartnerSelect(selectEl, partners) {
+            const options = partners.map(p =>
+                `<option value="${esc(p.id)}">${esc(p.name)}${p.province ? ' — ' + esc(p.province) : ''}</option>`
+            ).join('');
+            selectEl.insertAdjacentHTML('beforeend', options);
+        }
+
+        let transportPartnersLoaded = false;
+        let hotelPartnersLoaded = false;
+
+        document.getElementById('needTransport').addEventListener('change', async function() {
+            const wrap = document.getElementById('transportPartnerWrap');
+            wrap.classList.toggle('hidden', !this.checked);
+            if (this.checked && !transportPartnersLoaded) {
+                transportPartnersLoaded = true;
+                try {
+                    const partners = await window.fetchPartners(['Transport']);
+                    populatePartnerSelect(document.getElementById('transportPartner'), partners);
+                } catch (err) {
+                    console.error('Failed to load transport partners:', err);
+                }
+            }
+        });
+
+        document.getElementById('needHotel').addEventListener('change', async function() {
+            const wrap = document.getElementById('hotelPartnerWrap');
+            wrap.classList.toggle('hidden', !this.checked);
+            if (this.checked && !hotelPartnersLoaded) {
+                hotelPartnersLoaded = true;
+                try {
+                    const partners = await window.fetchPartners(['Hotel']);
+                    populatePartnerSelect(document.getElementById('hotelPartner'), partners);
+                } catch (err) {
+                    console.error('Failed to load hotel partners:', err);
+                }
+            }
+        });
+
         document.getElementById('bookingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -238,6 +304,8 @@
                     booking_time: document.getElementById('bookingTime').value,
                     need_transport: document.getElementById('needTransport').checked,
                     need_hotel: document.getElementById('needHotel').checked,
+                    transport_partner_id: document.getElementById('transportPartner').value || null,
+                    hotel_partner_id: document.getElementById('hotelPartner').value || null,
                     attachment_url: attachmentUrl,
                     status: 'pending'
                 };
@@ -248,6 +316,8 @@
                     '✅ จองสำเร็จ! ทีมงาน WOS จะติดต่อกลับเพื่อยืนยันการนัดหมายภายใน 24 ชม.',
                     'success');
                 document.getElementById('bookingForm').reset();
+                document.getElementById('transportPartnerWrap').classList.add('hidden');
+                document.getElementById('hotelPartnerWrap').classList.add('hidden');
                 submitBtn.disabled = true;
                 btnLoading.classList.add('hidden');
                 btnText.classList.remove('hidden');

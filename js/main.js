@@ -141,7 +141,7 @@
     // Submit a new booking
     window.submitBooking = async function(payload) {
         if (!window.__supabase) throw new Error('Supabase client is not initialized');
-        const { data, error } = await window.__supabase.from('cases').insert([payload]).select();
+        const { data, error } = await window.__supabase.from('bookings').insert([payload]).select();
         if (error) throw error;
         return data;
     };
@@ -222,6 +222,17 @@
     };
 
     // ============================================================
+    // 🔒 HTML ESCAPE HELPER (Shared) — prevents XSS when injecting
+    // DB values (partner names, descriptions, etc.) into innerHTML
+    // ============================================================
+    window.escapeHtml = function(str) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/[&<>"']/g, function(c) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+        });
+    };
+
+    // ============================================================
     // 🔗 URL QUERY HELPER
     // ============================================================
     window.getQueryParam = function(key) {
@@ -229,26 +240,11 @@
     };
 
     // ============================================================
-    // 💰 CURRENCY FORMAT HELPER (language-aware)
+    // 💰 CURRENCY FORMAT HELPER
     // ============================================================
     window.formatTHB = function(amount) {
         if (amount === null || amount === undefined) return '-';
-        const lang = window.getCurrentLang();
-        const suffix = lang === 'en' ? ' THB' : lang === 'lo' ? ' ບາດ' : ' บาท';
-        return Number(amount).toLocaleString('th-TH') + suffix;
-    };
-
-    // ============================================================
-    // 🛡️ HTML ESCAPE HELPER (prevent stored-XSS from DB content)
-    // ============================================================
-    window.escapeHtml = function(str) {
-        if (str === null || str === undefined) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+        return Number(amount).toLocaleString('th-TH') + ' บาท';
     };
 
     // ============================================================
